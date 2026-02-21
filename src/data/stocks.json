@@ -1,0 +1,2512 @@
+[
+  {
+    "symbol": "BANKNIFTY",
+    "name": "Bank Nifty",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "NIFTY",
+    "name": "Nifty 50",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "3MINDIA",
+    "name": "3M India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ABB",
+    "name": "ABB India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ACC",
+    "name": "ACC Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "AIAENG",
+    "name": "AIA Engineering Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "APLAPOLLO",
+    "name": "APL Apollo Tubes Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "AUBANK",
+    "name": "AU Small Finance Bank Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "AAVAS",
+    "name": "Aavas Financiers Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ADANIGREEN",
+    "name": "Adani Green Energy Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ADANIPORTS",
+    "name": "Adani Ports and Special Economic Zone Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ADANIPOWER",
+    "name": "Adani Power Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ADANITRANS",
+    "name": "Adani Transmission Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ABCAPITAL",
+    "name": "Aditya Birla Capital Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ABFRL",
+    "name": "Aditya Birla Fashion and Retail Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ADVENZYMES",
+    "name": "Advanced Enzyme Tech Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "AEGISCHEM",
+    "name": "Aegis Logistics Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "AJANTPHARM",
+    "name": "Ajanta Pharmaceuticals Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "AKZOINDIA",
+    "name": "Akzo Nobel India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "APLLTD",
+    "name": "Alembic Pharmaceuticals Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ALKEM",
+    "name": "Alkem Laboratories Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ALBK",
+    "name": "Allahabad Bank",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ALLCARGO",
+    "name": "Allcargo Logistics Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "AMARAJABAT",
+    "name": "Amara Raja Batteries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "AMBUJACEM",
+    "name": "Ambuja Cements Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ANDHRABANK",
+    "name": "Andhra Bank",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "APOLLOHOSP",
+    "name": "Apollo Hospitals Enterprise Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "APOLLOTYRE",
+    "name": "Apollo Tyres Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ASHOKLEY",
+    "name": "Ashok Leyland Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ASHOKA",
+    "name": "Ashoka Buildcon Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ASIANPAINT",
+    "name": "Asian Paints Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ASTERDM",
+    "name": "Aster DM Healthcare Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ASTRAZEN",
+    "name": "AstraZenca Pharma India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ASTRAL",
+    "name": "Astral Poly Technik Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ATUL",
+    "name": "Atul Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "AUROPHARMA",
+    "name": "Aurobindo Pharma Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "AVANTIFEED",
+    "name": "Avanti Feeds Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "DMART",
+    "name": "Avenue Supermarts Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "AXISBANK",
+    "name": "Axis Bank Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BASF",
+    "name": "BASF India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BEML",
+    "name": "BEML Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BSE",
+    "name": "BSE Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BAJAJ-AUTO",
+    "name": "Bajaj Auto Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BAJAJCON",
+    "name": "Bajaj Consumer Care Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BAJAJELEC",
+    "name": "Bajaj Electricals Ltd",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BAJFINANCE",
+    "name": "Bajaj Finance Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BAJAJFINSV",
+    "name": "Bajaj Finserv Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BAJAJHLDNG",
+    "name": "Bajaj Holdings & Investment Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BALKRISIND",
+    "name": "Balkrishna Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BALMLAWRIE",
+    "name": "Balmer Lawrie & Co. Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BALRAMCHIN",
+    "name": "Balrampur Chini Mills Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BANDHANBNK",
+    "name": "Bandhan Bank Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BANKBARODA",
+    "name": "Bank of Baroda",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BANKINDIA",
+    "name": "Bank of India",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MAHABANK",
+    "name": "Bank of Maharashtra.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BATAINDIA",
+    "name": "Bata India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BERGEPAINT",
+    "name": "Berger Paints India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BDL",
+    "name": "Bharat Dynamics Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BEL",
+    "name": "Bharat Electronics Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BHARATFORG",
+    "name": "Bharat Forge Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BHEL",
+    "name": "Bharat Heavy Electricals Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BPCL",
+    "name": "Bharat Petroleum Corporation Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BHARTIARTL",
+    "name": "Bharti Airtel Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "INFRATEL",
+    "name": "Bharti Infratel Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BIOCON",
+    "name": "Biocon Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BIRLACORPN",
+    "name": "Birla Corporation Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BLISSGVS",
+    "name": "Bliss GVS Pharma Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BLUEDART",
+    "name": "Blue Dart Express Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BLUESTARCO",
+    "name": "Blue Star Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BBTC",
+    "name": "Bombay Burmah Trading Corporation Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BOMDYEING",
+    "name": "Bombay Dyeing & Manufacturing Co. Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BOSCHLTD",
+    "name": "Bosch Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BRIGADE",
+    "name": "Brigade Enterprises Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "BRITANNIA",
+    "name": "Britannia Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CARERATING",
+    "name": "CARE Ratings Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CCL",
+    "name": "CCL Products (I) Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CESC",
+    "name": "CESC Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CGPOWER",
+    "name": "CG Power and Industrial Solutions Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CRISIL",
+    "name": "CRISIL Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CADILAHC",
+    "name": "Cadila Healthcare Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CANFINHOME",
+    "name": "Can Fin Homes Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CANBK",
+    "name": "Canara Bank",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CAPLIPOINT",
+    "name": "Caplin Point Laboratories Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CARBORUNIV",
+    "name": "Carborundum Universal Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CASTROLIND",
+    "name": "Castrol India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CEATLTD",
+    "name": "Ceat Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CENTRALBK",
+    "name": "Central Bank of India",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CDSL",
+    "name": "Central Depository Services (India) Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CENTURYPLY",
+    "name": "Century Plyboards (India) Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CERA",
+    "name": "Cera Sanitaryware Ltd",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CHAMBLFERT",
+    "name": "Chambal Fertilizers & Chemicals Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CHENNPETRO",
+    "name": "Chennai Petroleum Corporation Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CHOLAHLDNG",
+    "name": "Cholamandalam Financial Holdings Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CHOLAFIN",
+    "name": "Cholamandalam Investment and Finance Company Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CIPLA",
+    "name": "Cipla Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CUB",
+    "name": "City Union Bank Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "COALINDIA",
+    "name": "Coal India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "COCHINSHIP",
+    "name": "Cochin Shipyard Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "COFFEEDAY",
+    "name": "Coffee Day Enterprises Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "COLPAL",
+    "name": "Colgate Palmolive (India) Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CONCOR",
+    "name": "Container Corporation of India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "COROMANDEL",
+    "name": "Coromandel International Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CORPBANK",
+    "name": "Corporation Bank",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "COX&KINGS",
+    "name": "Cox & Kings Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CREDITACC",
+    "name": "CreditAccess Grameen Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CROMPTON",
+    "name": "Crompton Greaves Consumer Electricals Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CUMMINSIND",
+    "name": "Cummins India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "CYIENT",
+    "name": "Cyient Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "DBCORP",
+    "name": "D.B.Corp Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "DCBBANK",
+    "name": "DCB Bank Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "DCMSHRIRAM",
+    "name": "DCM Shriram Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "DLF",
+    "name": "DLF Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "DABUR",
+    "name": "Dabur India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "DEEPAKFERT",
+    "name": "Deepak Fertilisers & Petrochemicals Corp. Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "DEEPAKNTR",
+    "name": "Deepak Nitrite Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "DELTACORP",
+    "name": "Delta Corp Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "DHFL",
+    "name": "Dewan Housing Finance Corporation Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "DBL",
+    "name": "Dilip Buildcon Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "DISHTV",
+    "name": "Dish TV India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "DCAL",
+    "name": "Dishman Carbogen Amcis Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "DIVISLAB",
+    "name": "Divi's Laboratories Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "DIXON",
+    "name": "Dixon Technologies (India) Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "LALPATHLAB",
+    "name": "Dr. Lal Path Labs Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "DRREDDY",
+    "name": "Dr. Reddy's Laboratories Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "EIDPARRY",
+    "name": "E.I.D. Parry (India) Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "EIHOTEL",
+    "name": "EIH Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "EDELWEISS",
+    "name": "Edelweiss Financial Services Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "EICHERMOT",
+    "name": "Eicher Motors Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ELGIEQUIP",
+    "name": "Elgi Equipments Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "EMAMILTD",
+    "name": "Emami Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ENDURANCE",
+    "name": "Endurance Technologies Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ENGINERSIN",
+    "name": "Engineers India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "EQUITAS",
+    "name": "Equitas Holdings Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ERIS",
+    "name": "Eris Lifesciences Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ESCORTS",
+    "name": "Escorts Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ESSELPACK",
+    "name": "Essel Propack Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "EXIDEIND",
+    "name": "Exide Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "FDC",
+    "name": "FDC Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "FEDERALBNK",
+    "name": "Federal Bank Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "FINEORG",
+    "name": "Fine Organic Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "FINCABLES",
+    "name": "Finolex Cables Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "FINPIPE",
+    "name": "Finolex Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "FSL",
+    "name": "Firstsource Solutions Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "FORTIS",
+    "name": "Fortis Healthcare Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "FCONSUMER",
+    "name": "Future Consumer Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "FLFL",
+    "name": "Future Lifestyle Fashions Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "FRETAIL",
+    "name": "Future Retail Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GAIL",
+    "name": "GAIL (India) Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GEPIL",
+    "name": "GE Power India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GET&D",
+    "name": "GE T&D India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GHCL",
+    "name": "GHCL Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GMRINFRA",
+    "name": "GMR Infrastructure Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GALAXYSURF",
+    "name": "Galaxy Surfactants Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GDL",
+    "name": "Gateway Distriparks Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GAYAPROJ",
+    "name": "Gayatri Projects Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GICRE",
+    "name": "General Insurance Corporation of India",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GILLETTE",
+    "name": "Gillette India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GSKCONS",
+    "name": "GlaxoSmithkline Consumer Healthcare Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GLAXO",
+    "name": "Glaxosmithkline Pharmaceuticals Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GLENMARK",
+    "name": "Glenmark Pharmaceuticals Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GODFRYPHLP",
+    "name": "Godfrey Phillips India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GODREJAGRO",
+    "name": "Godrej Agrovet Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GODREJCP",
+    "name": "Godrej Consumer Products Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GODREJIND",
+    "name": "Godrej Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GODREJPROP",
+    "name": "Godrej Properties Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GRANULES",
+    "name": "Granules India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GRAPHITE",
+    "name": "Graphite India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GRASIM",
+    "name": "Grasim Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GESHIP",
+    "name": "Great Eastern Shipping Co. Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GREAVESCOT",
+    "name": "Greaves Cotton Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GRINDWELL",
+    "name": "Grindwell Norton Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GRUH",
+    "name": "Gruh Finance Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GUJALKALI",
+    "name": "Gujarat Alkalies & Chemicals Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GUJFLUORO",
+    "name": "Gujarat Fluorochemicals Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GUJGASLTD",
+    "name": "Gujarat Gas Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GMDCLTD",
+    "name": "Gujarat Mineral Development Corporation Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GNFC",
+    "name": "Gujarat Narmada Valley Fertilizers and Chemicals Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GPPL",
+    "name": "Gujarat Pipavav Port Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GSFC",
+    "name": "Gujarat State Fertilizers & Chemicals Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GSPL",
+    "name": "Gujarat State Petronet Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "GULFOILLUB",
+    "name": "Gulf Oil Lubricants India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HEG",
+    "name": "H.E.G. Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HCLTECH",
+    "name": "HCL Technologies Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HDFCAMC",
+    "name": "HDFC Asset Management Company Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HDFCBANK",
+    "name": "HDFC Bank Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HDFCLIFE",
+    "name": "HDFC Life Insurance Company Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HATHWAY",
+    "name": "Hathway Cable & Datacom Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HATSUN",
+    "name": "Hatsun Agro Product Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HAVELLS",
+    "name": "Havells India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HEIDELBERG",
+    "name": "HeidelbergCement India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HERITGFOOD",
+    "name": "Heritage Foods Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HEROMOTOCO",
+    "name": "Hero MotoCorp Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HEXAWARE",
+    "name": "Hexaware Technologies Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HFCL",
+    "name": "Himachal Fut Com Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HSCL",
+    "name": "Himadri Speciality Chemical Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HIMATSEIDE",
+    "name": "Himatsingka Seide Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HINDALCO",
+    "name": "Hindalco Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HAL",
+    "name": "Hindustan Aeronautics Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HINDCOPPER",
+    "name": "Hindustan Copper Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HINDPETRO",
+    "name": "Hindustan Petroleum Corporation Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HINDUNILVR",
+    "name": "Hindustan Unilever Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HINDZINC",
+    "name": "Hindustan Zinc Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HONAUT",
+    "name": "Honeywell Automation India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HUDCO",
+    "name": "Housing & Urban Development Corporation Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "HDFC",
+    "name": "Housing Development Finance Corporation Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ICICIBANK",
+    "name": "ICICI Bank Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ICICIGI",
+    "name": "ICICI Lombard General Insurance Company Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ICICIPRULI",
+    "name": "ICICI Prudential Life Insurance Company Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ISEC",
+    "name": "ICICI Securities Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ICRA",
+    "name": "ICRA Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "IDBI",
+    "name": "IDBI Bank Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "IDFCFIRSTB",
+    "name": "IDFC First Bank Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "IDFC",
+    "name": "IDFC Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "IFBIND",
+    "name": "IFB Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "IFCI",
+    "name": "IFCI Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "IRB",
+    "name": "IRB Infrastructure Developers Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "IRCON",
+    "name": "IRCON International Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ITC",
+    "name": "ITC Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ITDCEM",
+    "name": "ITD Cementation India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ITI",
+    "name": "ITI Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "INDIACEM",
+    "name": "India Cements Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ITDC",
+    "name": "India Tourism Development Corporation Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "IBULHSGFIN",
+    "name": "Indiabulls Housing Finance Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "IBULISL",
+    "name": "Indiabulls Integrated Services Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "IBREALEST",
+    "name": "Indiabulls Real Estate Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "IBVENTURES",
+    "name": "Indiabulls Ventures Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "INDIANB",
+    "name": "Indian Bank",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "IEX",
+    "name": "Indian Energy Exchange Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "INDHOTEL",
+    "name": "Indian Hotels Co. Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "IOC",
+    "name": "Indian Oil Corporation Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "IOB",
+    "name": "Indian Overseas Bank",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "INDOSTAR",
+    "name": "IndoStar Capital Finance Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "INDOCO",
+    "name": "Indoco Remedies Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "IGL",
+    "name": "Indraprastha Gas Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "INDUSINDBK",
+    "name": "IndusInd Bank Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "INFIBEAM",
+    "name": "Infibeam Avenues Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "NAUKRI",
+    "name": "Info Edge (India) Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "INFY",
+    "name": "Infosys Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "INOXLEISUR",
+    "name": "Inox Leisure Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "INOXWIND",
+    "name": "Inox Wind Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "INTELLECT",
+    "name": "Intellect Design Arena Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "INDIGO",
+    "name": "InterGlobe Aviation Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "IPCALAB",
+    "name": "Ipca Laboratories Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "JBCHEPHARM",
+    "name": "J.B. Chemicals & Pharmaceuticals Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "JKCEMENT",
+    "name": "J.K. Cement Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "JKLAKSHMI",
+    "name": "JK Lakshmi Cement Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "JKPAPER",
+    "name": "JK Paper Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "JKTYRE",
+    "name": "JK Tyre & Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "JMFINANCIL",
+    "name": "JM Financial Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "JSWENERGY",
+    "name": "JSW Energy Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "JSWSTEEL",
+    "name": "JSW Steel Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "JAGRAN",
+    "name": "Jagran Prakashan Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "JAICORPLTD",
+    "name": "Jai Corp Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "JISLJALEQS",
+    "name": "Jain Irrigation Systems Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "JPASSOCIAT",
+    "name": "Jaiprakash Associates Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "J&KBANK",
+    "name": "Jammu & Kashmir Bank Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "JAMNAAUTO",
+    "name": "Jamna Auto Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "JETAIRWAYS",
+    "name": "Jet Airways (India) Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "JINDALSAW",
+    "name": "Jindal Saw Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "JSLHISAR",
+    "name": "Jindal Stainless (Hisar) Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "JSL",
+    "name": "Jindal Stainless Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "JINDALSTEL",
+    "name": "Jindal Steel & Power Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "JUBLFOOD",
+    "name": "Jubilant Foodworks Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "JUBILANT",
+    "name": "Jubilant Life Sciences Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "JUSTDIAL",
+    "name": "Justdial Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "JYOTHYLAB",
+    "name": "Jyothy Laboratories Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "KPRMILL",
+    "name": "K.P.R. Mill Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "KEI",
+    "name": "KEI Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "KIOCL",
+    "name": "KIOCL Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "KNRCON",
+    "name": "KNR Constructions Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "KRBL",
+    "name": "KRBL Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "KAJARIACER",
+    "name": "Kajaria Ceramics Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "KALPATPOWR",
+    "name": "Kalpataru Power Transmission Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "KANSAINER",
+    "name": "Kansai Nerolac Paints Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "KTKBANK",
+    "name": "Karnataka Bank Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "KARURVYSYA",
+    "name": "Karur Vysya Bank Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "KSCL",
+    "name": "Kaveri Seed Company Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "KEC",
+    "name": "Kec International Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "KIRLOSENG",
+    "name": "Kirloskar Oil Eng Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "KOLTEPATIL",
+    "name": "Kolte-Patil Developers Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "KOTAKBANK",
+    "name": "Kotak Mahindra Bank Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "L&TFH",
+    "name": "L&T Finance Holdings Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "LTTS",
+    "name": "L&T Technology Services Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "LICHSGFIN",
+    "name": "LIC Housing Finance Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "LAXMIMACH",
+    "name": "Lakshmi Machine Works Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "LAKSHVILAS",
+    "name": "Lakshmi Vilas Bank Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "LTI",
+    "name": "Larsen & Toubro Infotech Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "LT",
+    "name": "Larsen & Toubro Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "LAURUSLABS",
+    "name": "Laurus Labs Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "LEMONTREE",
+    "name": "Lemon Tree Hotels Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "LINDEINDIA",
+    "name": "Linde India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "LUPIN",
+    "name": "Lupin Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "LUXIND",
+    "name": "Lux Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MASFIN",
+    "name": "MAS Financial Services Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MMTC",
+    "name": "MMTC Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MOIL",
+    "name": "MOIL Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MRF",
+    "name": "MRF Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MAGMA",
+    "name": "Magma Fincorp Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MGL",
+    "name": "Mahanagar Gas Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MAHSCOOTER",
+    "name": "Maharashtra Scooters Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MAHSEAMLES",
+    "name": "Maharashtra Seamless Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "M&MFIN",
+    "name": "Mahindra & Mahindra Financial Services Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "M&M",
+    "name": "Mahindra & Mahindra Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MAHINDCIE",
+    "name": "Mahindra CIE Automotive Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MHRIL",
+    "name": "Mahindra Holidays & Resorts India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MAHLOG",
+    "name": "Mahindra Logistics Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MANAPPURAM",
+    "name": "Manappuram Finance Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MRPL",
+    "name": "Mangalore Refinery & Petrochemicals Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MARICO",
+    "name": "Marico Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MARUTI",
+    "name": "Maruti Suzuki India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MFSL",
+    "name": "Max Financial Services Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MAXINDIA",
+    "name": "Max India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MINDTREE",
+    "name": "MindTree Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MINDACORP",
+    "name": "Minda Corporation Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MINDAIND",
+    "name": "Minda Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MONSANTO",
+    "name": "Monsanto India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MOTHERSUMI",
+    "name": "Motherson Sumi Systems Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MOTILALOFS",
+    "name": "Motilal Oswal Financial Services Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MPHASIS",
+    "name": "MphasiS Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MUTHOOTFIN",
+    "name": "Muthoot Finance Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "NATCOPHARM",
+    "name": "NATCO Pharma Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "NBCC",
+    "name": "NBCC (India) Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "NCC",
+    "name": "NCC Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "NESCO",
+    "name": "NESCO Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "NHPC",
+    "name": "NHPC Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "NIITTECH",
+    "name": "NIIT Technologies Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "NLCINDIA",
+    "name": "NLC India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "NMDC",
+    "name": "NMDC Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "NTPC",
+    "name": "NTPC Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "NH",
+    "name": "Narayana Hrudayalaya Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "NATIONALUM",
+    "name": "National Aluminium Co. Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "NFL",
+    "name": "National Fertilizers Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "NBVENTURES",
+    "name": "Nava Bharat Ventures Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "NAVINFLUOR",
+    "name": "Navin Fluorine International Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "NETWORK18",
+    "name": "Network18 Media & Investments Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "NILKAMAL",
+    "name": "Nilkamal Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "OBEROIRLTY",
+    "name": "Oberoi Realty Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ONGC",
+    "name": "Oil & Natural Gas Corporation Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "OIL",
+    "name": "Oil India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "OMAXE",
+    "name": "Omaxe Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "OFSS",
+    "name": "Oracle Financial Services Software Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ORIENTCEM",
+    "name": "Orient Cement Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ORIENTELEC",
+    "name": "Orient Electric Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ORIENTBANK",
+    "name": "Oriental Bank of Commerce",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "PCJEWELLER",
+    "name": "PC Jeweller Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "PIIND",
+    "name": "PI Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "PNBHOUSING",
+    "name": "PNB Housing Finance Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "PNCINFRA",
+    "name": "PNC Infratech Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "PTC",
+    "name": "PTC India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "PVR",
+    "name": "PVR Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "PAGEIND",
+    "name": "Page Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "PARAGMILK",
+    "name": "Parag Milk Foods Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "PERSISTENT",
+    "name": "Persistent Systems Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "PETRONET",
+    "name": "Petronet LNG Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "PFIZER",
+    "name": "Pfizer Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "PHILIPCARB",
+    "name": "Phillips Carbon Black Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "PHOENIXLTD",
+    "name": "Phoenix Mills Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "PIDILITIND",
+    "name": "Pidilite Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "PEL",
+    "name": "Piramal Enterprises Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "PFC",
+    "name": "Power Finance Corporation Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "POWERGRID",
+    "name": "Power Grid Corporation of India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "PRAJIND",
+    "name": "Praj Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "PRESTIGE",
+    "name": "Prestige Estates Projects Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "PRSMJOHNSN",
+    "name": "Prism Johnson Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "PGHL",
+    "name": "Procter & Gamble Health Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "PGHH",
+    "name": "Procter & Gamble Hygiene & Health Care Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "PNB",
+    "name": "Punjab National Bank",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "QUESS",
+    "name": "Quess Corp Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "RBLBANK",
+    "name": "RBL Bank Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "RECLTD",
+    "name": "REC Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "RITES",
+    "name": "RITES Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "RADICO",
+    "name": "Radico Khaitan Ltd",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "RAIN",
+    "name": "Rain Industries Ltd",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "RAJESHEXPO",
+    "name": "Rajesh Exports Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "RALLIS",
+    "name": "Rallis India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "RKFORGE",
+    "name": "Ramkrishna Forgings Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "RCF",
+    "name": "Rashtriya Chemicals & Fertilizers Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "RAYMOND",
+    "name": "Raymond Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "REDINGTON",
+    "name": "Redington (India) Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "RELAXO",
+    "name": "Relaxo Footwears Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "RELCAPITAL",
+    "name": "Reliance Capital Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "RCOM",
+    "name": "Reliance Communications Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "RHFL",
+    "name": "Reliance Home Finance Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "RELIANCE",
+    "name": "Reliance Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "RELINFRA",
+    "name": "Reliance Infrastructure Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "RNAM",
+    "name": "Reliance Nippon Life Asset Management Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "RPOWER",
+    "name": "Reliance Power Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "REPCOHOME",
+    "name": "Repco Home Finance Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "RUPA",
+    "name": "Rupa & Company Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SHK",
+    "name": "S H Kelkar and Company Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SBILIFE",
+    "name": "SBI Life Insurance Company Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SJVN",
+    "name": "SJVN Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SKFINDIA",
+    "name": "SKF India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SREINFRA",
+    "name": "SREI Infrastructure Finance Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SRF",
+    "name": "SRF Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SADBHAV",
+    "name": "Sadbhav Engineering Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SANOFI",
+    "name": "Sanofi India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SCHAEFFLER",
+    "name": "Schaeffler India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SIS",
+    "name": "Security and Intelligence Services (India) Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SHANKARA",
+    "name": "Shankara Building Products Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SHARDACROP",
+    "name": "Sharda Cropchem Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SFL",
+    "name": "Sheela Foam Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SHILPAMED",
+    "name": "Shilpa Medicare Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SCI",
+    "name": "Shipping Corporation of India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SHOPERSTOP",
+    "name": "Shoppers Stop Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SHREECEM",
+    "name": "Shree Cement Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "RENUKA",
+    "name": "Shree Renuka Sugars Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SHRIRAMCIT",
+    "name": "Shriram City Union Finance Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SRTRANSFIN",
+    "name": "Shriram Transport Finance Co. Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SIEMENS",
+    "name": "Siemens Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SPTL",
+    "name": "Sintex Plastics Technology Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SOBHA",
+    "name": "Sobha Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SOLARINDS",
+    "name": "Solar Industries India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SONATSOFTW",
+    "name": "Sonata Software Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SOUTHBANK",
+    "name": "South Indian Bank Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "STARCEMENT",
+    "name": "Star Cement Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SBIN",
+    "name": "State Bank of India",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SAIL",
+    "name": "Steel Authority of India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "STRTECH",
+    "name": "Sterlite Technologies Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "STAR",
+    "name": "Strides Pharma Science Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SUDARSCHEM",
+    "name": "Sudarshan Chemical Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SPARC",
+    "name": "Sun Pharma Advanced Research Company Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SUNPHARMA",
+    "name": "Sun Pharmaceutical Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SUNTV",
+    "name": "Sun TV Network Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SUNCLAYLTD",
+    "name": "Sundaram Clayton Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SUNDARMFIN",
+    "name": "Sundaram Finance Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SUNDRMFAST",
+    "name": "Sundram Fasteners Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SUNTECK",
+    "name": "Sunteck Realty Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SUPRAJIT",
+    "name": "Suprajit Engineering Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SUPREMEIND",
+    "name": "Supreme Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SUVEN",
+    "name": "Suven Life Sciences Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SUZLON",
+    "name": "Suzlon Energy Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SWANENERGY",
+    "name": "Swan Energy Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SYMPHONY",
+    "name": "Symphony Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SYNDIBANK",
+    "name": "Syndicate Bank",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "SYNGENE",
+    "name": "Syngene International Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TCNSBRANDS",
+    "name": "TCNS Clothing Co. Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TTKPRESTIG",
+    "name": "TTK Prestige Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TVTODAY",
+    "name": "TV Today Network Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TV18BRDCST",
+    "name": "TV18 Broadcast Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TVSMOTOR",
+    "name": "TVS Motor Company Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TAKE",
+    "name": "Take Solutions Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TNPL",
+    "name": "Tamil Nadu Newsprint & Papers Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TATACHEM",
+    "name": "Tata Chemicals Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TATACOFFEE",
+    "name": "Tata Coffee Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TCS",
+    "name": "Tata Consultancy Services Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TATAELXSI",
+    "name": "Tata Elxsi Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TATAGLOBAL",
+    "name": "Tata Global Beverages Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TATAINVEST",
+    "name": "Tata Investment Corporation Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TMPV",
+    "name": "Tata Motors PV Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TATAPOWER",
+    "name": "Tata Power Co. Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TATASTEEL",
+    "name": "Tata Steel Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TEAMLEASE",
+    "name": "Teamlease Services Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TECHM",
+    "name": "Tech Mahindra Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "NIACL",
+    "name": "The New India Assurance Company Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "RAMCOCEM",
+    "name": "The Ramco Cements Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "THERMAX",
+    "name": "Thermax Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "THOMASCOOK",
+    "name": "Thomas Cook (India) Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "THYROCARE",
+    "name": "Thyrocare Technologies Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TIMETECHNO",
+    "name": "Time Technoplast Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TIMKEN",
+    "name": "Timken India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TITAN",
+    "name": "Titan Company Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TORNTPHARM",
+    "name": "Torrent Pharmaceuticals Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TORNTPOWER",
+    "name": "Torrent Power Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TRENT",
+    "name": "Trent Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TRIDENT",
+    "name": "Trident Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TRITURBINE",
+    "name": "Triveni Turbine Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "TIINDIA",
+    "name": "Tube Investments of India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "UCOBANK",
+    "name": "UCO Bank",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "UFLEX",
+    "name": "UFLEX Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "UPL",
+    "name": "UPL Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "UJJIVAN",
+    "name": "Ujjivan Financial Services Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ULTRACEMCO",
+    "name": "UltraTech Cement Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "UNIONBANK",
+    "name": "Union Bank of India",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "UBL",
+    "name": "United Breweries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "MCDOWELL-N",
+    "name": "United Spirits Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "VGUARD",
+    "name": "V-Guard Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "VMART",
+    "name": "V-Mart Retail Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "VIPIND",
+    "name": "V.I.P. Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "VRLLOG",
+    "name": "VRL Logistics Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "VSTIND",
+    "name": "VST Industries Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "WABAG",
+    "name": "Va Tech Wabag Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "VAKRANGEE",
+    "name": "Vakrangee Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "VTL",
+    "name": "Vardhman Textiles Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "VARROC",
+    "name": "Varroc Engineering Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "VBL",
+    "name": "Varun Beverages Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "VEDL",
+    "name": "Vedanta Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "VENKEYS",
+    "name": "Venky's (India) Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "VINATIORGA",
+    "name": "Vinati Organics Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "IDEA",
+    "name": "Vodafone Idea Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "VOLTAS",
+    "name": "Voltas Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "WABCOINDIA",
+    "name": "WABCO India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "WELCORP",
+    "name": "Welspun Corp Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "WELSPUNIND",
+    "name": "Welspun India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "WHIRLPOOL",
+    "name": "Whirlpool of India Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "WIPRO",
+    "name": "Wipro Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "WOCKPHARMA",
+    "name": "Wockhardt Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "YESBANK",
+    "name": "Yes Bank Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ZEEL",
+    "name": "Zee Entertainment Enterprises Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ZENSARTECH",
+    "name": "Zensar Technolgies Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ZYDUSWELL",
+    "name": "Zydus Wellness Ltd.",
+    "exchange": "NSE"
+  },
+  {
+    "symbol": "ECLERX",
+    "name": "eClerx Services Ltd.",
+    "exchange": "NSE"
+  }
+]
