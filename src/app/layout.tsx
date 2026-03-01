@@ -11,8 +11,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "TradeSim India - Paper Trading Platform",
-  description: "Learn to trade stocks and F&O with virtual money in a realistic Indian market environment.",
+  title: "PaperTradingArena – Free Paper Trading Simulator for Stocks & F&O",
+  description: "Practice stock trading with real NSE/BSE data. Best paper trading platform for beginners.",
 };
 
 export default function RootLayout({

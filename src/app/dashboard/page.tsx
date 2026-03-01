@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { usePortfolio } from '@/hooks/usePortfolio';
 import { ArrowUpRight, ArrowDownRight, Wallet, Activity, TrendingUp, RefreshCw, DatabaseBackup, Loader2 } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
     BarChart, Bar, Cell
@@ -14,13 +14,12 @@ import { cn } from '@/lib/utils';
 
 export default function DashboardPage() {
     const { user } = useAuth();
-    const { balance, invested, currentValue, totalPnL, dayPnL, dayPnLPercent, holdings, loading, refresh } = usePortfolio();
-    const [testing, setTesting] = useState(false);
+    const { balance, invested, currentValue, totalPnL, dayPnL, dayPnLPercent, marginLocked, holdings, loading, refresh } = usePortfolio();
     const [refreshing, setRefreshing] = useState(false);
 
     // Mock Historical Data for Charts based on current portfolio value
     const { mockEquityData, mockDailyPnL } = useMemo(() => {
-        const totalEquity = balance + currentValue;
+        const totalEquity = balance + marginLocked + dayPnL;
         const eData = [];
         const pData = [];
 
@@ -59,33 +58,6 @@ export default function DashboardPage() {
         setTimeout(() => setRefreshing(false), 500);
     };
 
-    const handleTestTrade = async () => {
-        setTesting(true);
-        try {
-            const res = await fetch('/api/trade', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    symbol: 'RELIANCE',
-                    type: 'BUY',
-                    qty: 1,
-                    price: 2400,
-                    instrument_type: 'EQUITY'
-                })
-            });
-            const data = await res.json();
-            if (data.success) {
-                await refresh();
-            } else {
-                alert('Trade Failed: ' + data.error);
-            }
-        } catch (e: any) {
-            alert('Error: ' + e.message);
-        } finally {
-            setTesting(false);
-        }
-    };
-
     if (loading) {
         return (
             <div className="h-[calc(100vh-100px)] flex flex-col items-center justify-center">
@@ -95,7 +67,7 @@ export default function DashboardPage() {
         );
     }
 
-    const totalEquity = balance + currentValue;
+    const totalEquity = balance + marginLocked + dayPnL;
 
     return (
         <div className="space-y-6 max-w-7xl mx-auto pb-10">
@@ -109,10 +81,6 @@ export default function DashboardPage() {
                     <Button onClick={handleRefresh} disabled={refreshing} variant="outline" className="flex-1 sm:flex-none">
                         <RefreshCw className={cn("h-4 w-4 mr-2", refreshing && "animate-spin")} />
                         Refresh
-                    </Button>
-                    <Button onClick={handleTestTrade} disabled={testing} variant="secondary" className="flex-1 sm:flex-none bg-accent hover:bg-accent/80 text-foreground">
-                        {testing ? <Loader2 className="h-4 w-4 animate-spin" /> : <DatabaseBackup className="h-4 w-4 mr-2" />}
-                        <span className="hidden sm:inline">Test Trade</span>
                     </Button>
                 </div>
             </div>
@@ -216,7 +184,7 @@ export default function DashboardPage() {
                                     <Tooltip
                                         contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }}
                                         itemStyle={{ color: 'hsl(var(--foreground))', fontWeight: 'bold' }}
-                                        formatter={(value: number) => [`₹${value.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`, 'Equity']}
+                                        formatter={(value: any) => [`₹${Number(value).toLocaleString('en-IN', { maximumFractionDigits: 2 })}`, 'Equity']}
                                     />
                                     <Area
                                         type="monotone"
@@ -252,7 +220,7 @@ export default function DashboardPage() {
                                     <Tooltip
                                         cursor={{ fill: 'hsl(var(--muted))' }}
                                         contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }}
-                                        formatter={(value: number) => [`₹${value.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`, 'PnL']}
+                                        formatter={(value: any) => [`${Number(value) > 0 ? '+' : ''}₹${Number(value).toLocaleString('en-IN', { maximumFractionDigits: 2 })}`, 'PnL']}
                                     />
                                     <Bar dataKey="pnl" radius={[4, 4, 0, 0]}>
                                         {mockDailyPnL.map((entry, index) => (
@@ -307,9 +275,9 @@ export default function DashboardPage() {
                                             <span className="font-mono">
                                                 {(pos.pnl || 0) >= 0 ? '+' : ''}₹{(pos.pnl || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
                                             </span>
-                                            {pos.invested > 0 && (
+                                            {(pos.invested || 0) > 0 && (
                                                 <span className="text-[10px] opacity-80 font-mono">
-                                                    {(pos.pnl || 0) >= 0 ? '+' : ''}{(((pos.pnl || 0) / pos.invested) * 100).toFixed(2)}%
+                                                    {(pos.pnl || 0) >= 0 ? '+' : ''}{(((pos.pnl || 0) / (pos.invested || 1)) * 100).toFixed(2)}%
                                                 </span>
                                             )}
                                         </td>

@@ -29,7 +29,7 @@ const sidebarItems = [
 ];
 
 const bottomItems = [
-    { href: '/leaderboard', label: 'Leaderboard', icon: Trophy },
+    { href: '/dashboard/leaderboard', label: 'Leaderboard', icon: Trophy },
     { href: '/learn', label: 'Learn', icon: BookOpen },
     { href: '/dashboard/settings', label: 'Settings', icon: Settings },
 ];
@@ -40,10 +40,24 @@ export function Sidebar() {
 
     return (
         <aside className="w-64 border-r bg-background hidden md:flex flex-col h-screen sticky top-0 transition-all select-none">
-            <div className="h-16 flex items-center px-6 border-b">
-                <Link href="/" className="font-bold text-xl flex items-center gap-2 tracking-tight">
-                    <span className="text-primary">TradeSim</span>
-                    <span className="text-foreground">India</span>
+            {/* Logo */}
+            <div className="h-16 flex items-center px-4 border-b">
+                <Link href="/" className="font-bold text-[19px] flex items-center gap-2 tracking-[0.5px] group">
+                    <svg width="24" height="24" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" className="group-hover:drop-shadow-[0_0_8px_rgba(56,189,248,0.5)] transition-all duration-300">
+                        <rect width="28" height="28" rx="6" fill="url(#paint0_linear_side)" />
+                        <path d="M14 6V22" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+                        <path d="M10 10H18V18H10V10Z" fill="white" />
+                        <path d="M14 6L10 10H18L14 6Z" fill="white" />
+                        <defs>
+                            <linearGradient id="paint0_linear_side" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+                                <stop stopColor="#1E40AF" />
+                                <stop offset="1" stopColor="#38BDF8" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1E40AF] to-[#38BDF8] dark:from-white dark:to-white">
+                        PaperTradingArena
+                    </span>
                 </Link>
             </div>
 

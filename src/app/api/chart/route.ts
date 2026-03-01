@@ -22,10 +22,20 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: 'Symbol required' }, { status: 400 });
     }
 
-    // Symbol mappings for Yahoo Finance
-    // Usually Indian stocks need .NS or .BO suffix
-    // If no suffix, default to .NS
-    if (!symbol.includes('.') && !symbol.includes(':')) {
+    const upperSymbol = symbol.toUpperCase().trim();
+    
+    // Explicit Index mapping for NIFTY / BANKNIFTY
+    if (upperSymbol === 'NIFTY' || upperSymbol === 'NIFTY 50' || upperSymbol === 'NSE:NIFTY') {
+        symbol = '^NSEI';
+    } else if (upperSymbol === 'BANKNIFTY' || upperSymbol === 'BANK NIFTY' || upperSymbol === 'NSE:BANKNIFTY') {
+        symbol = '^NSEBANK';
+    } else if (upperSymbol === 'SENSEX') {
+        symbol = '^BSESN';
+    } else if (upperSymbol === 'FINNIFTY') {
+        symbol = '^CNXFIN';
+    } else if (symbol.startsWith('^')) {
+        // Indices like ^NSEI, ^BSESN do not need exchange suffixes
+    } else if (!symbol.includes('.') && !symbol.includes(':')) {
         symbol = `${symbol}.NS`;
     } else if (symbol.includes(':')) {
         // Convert BSE:RELIANCE to RELIANCE.BO and NSE:RELIANCE to RELIANCE.NS

@@ -14,8 +14,21 @@ export async function GET(request: Request) {
         const quotes = await Promise.all(
             symbols.map(rawSymbol => {
                 // Formatting symbol for Yahoo Finance
+                const upperSymbol = rawSymbol.toUpperCase().trim();
                 let symbol = rawSymbol;
-                if (!symbol.includes('.') && !symbol.includes(':')) {
+
+                // Explicit Index mapping for NIFTY / BANKNIFTY
+                if (upperSymbol === 'NIFTY' || upperSymbol === 'NIFTY 50' || upperSymbol === 'NSE:NIFTY') {
+                    symbol = '^NSEI';
+                } else if (upperSymbol === 'BANKNIFTY' || upperSymbol === 'BANK NIFTY' || upperSymbol === 'NSE:BANKNIFTY') {
+                    symbol = '^NSEBANK';
+                } else if (upperSymbol === 'SENSEX') {
+                    symbol = '^BSESN';
+                } else if (upperSymbol === 'FINNIFTY') {
+                    symbol = '^CNXFIN';
+                } else if (symbol.startsWith('^')) {
+                    // Indices like ^NSEI, ^BSESN do not need exchange suffixes
+                } else if (!symbol.includes('.') && !symbol.includes(':')) {
                     symbol = `${symbol}.NS`;
                 } else if (symbol.includes(':')) {
                     const parts = symbol.split(':');

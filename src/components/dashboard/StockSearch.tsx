@@ -9,6 +9,7 @@ interface Stock {
     symbol: string;
     name: string;
     exchange: string;
+    sector?: string;
 }
 
 interface StockSearchProps {
@@ -17,11 +18,22 @@ interface StockSearchProps {
     className?: string;
 }
 
+// Helper to generate a consistent color based on a string
+const stringToColour = (str: string) => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const color = Math.floor(Math.abs((Math.sin(hash) * 10000) % 1 * 16777215)).toString(16);
+    return '#' + '000000'.substring(0, 6 - color.length) + color;
+};
+
 export function StockSearch({ onSelect, placeholder = "Search stocks (e.g. RELIANCE, TCS)...", className = "" }: StockSearchProps) {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<Stock[]>([]);
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (query.length > 0) {
@@ -48,6 +60,18 @@ export function StockSearch({ onSelect, placeholder = "Search stocks (e.g. RELIA
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
+    // Global shortcut '/' to focus search
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                inputRef.current?.focus();
+            }
+        };
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
     const handleSelect = (stock: Stock) => {
         onSelect(stock.symbol);
         setQuery('');
@@ -72,50 +96,84 @@ export function StockSearch({ onSelect, placeholder = "Search stocks (e.g. RELIA
     };
 
     return (
-        <div className={`relative ${className}`} ref={containerRef}>
-            <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+        <div className={`relative tour-search ${className}`} ref={containerRef}>
+            <div className="relative group/input">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-focus-within/input:text-primary" />
                 <input
+                    ref={inputRef}
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     onFocus={() => query.length > 0 && setIsOpen(true)}
                     placeholder={placeholder}
-                    className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg pl-10 pr-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
+                    className="w-full bg-background border border-border rounded-md pl-9 pr-16 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all shadow-sm placeholder:text-muted-foreground/70"
                 />
-                {query && (
+
+                {/* Keyboard Shortcut Hint or Clear Button */}
+                {!query ? (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                        <kbd className="inline-flex items-center justify-center px-1.5 py-0.5 border border-border rounded bg-muted text-[10px] font-mono text-muted-foreground font-medium">
+                            /
+                        </kbd>
+                    </div>
+                ) : (
                     <button
-                        onClick={() => setQuery('')}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                        onClick={() => { setQuery(''); inputRef.current?.focus(); }}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground bg-muted hover:bg-muted/80 rounded-full p-0.5 transition-colors"
                     >
-                        <X className="h-4 w-4" />
+                        <X className="h-3 w-3" />
                     </button>
                 )}
             </div>
 
             {isOpen && (
-                <div className="absolute top-full mt-2 w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="absolute top-[calc(100%+4px)] left-0 w-[calc(100%+80px)] bg-card border border-border rounded-lg shadow-xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150">
                     {results.length > 0 ? (
-                        <div className="py-2">
-                            <div className="px-4 py-1 text-[10px] uppercase font-bold text-gray-400 tracking-wider">Stocks</div>
-                            {results.map((stock) => (
-                                <button
-                                    key={stock.symbol}
-                                    onClick={() => handleSelect(stock)}
-                                    className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-left group"
-                                >
-                                    <div className="flex flex-col">
-                                        <span className="font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
-                                            {highlightText(stock.symbol, query)}
-                                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-gray-500 uppercase font-medium">NSE</span>
-                                        </span>
-                                        <span className="text-xs text-gray-500 truncate max-w-[200px]">
-                                            {highlightText(stock.name, query)}
-                                        </span>
-                                    </div>
-                                    <TrendingUp className="h-4 w-4 text-gray-300 group-hover:text-blue-500 transition-colors" />
-                                </button>
-                            ))}
+                        <div className="py-1">
+                            <div className="px-3 py-1.5 text-[10px] uppercase font-bold text-muted-foreground tracking-widest bg-muted/30 border-b border-border">Symbol Search</div>
+                            {results.map((stock) => {
+                                const initial = stock.symbol.charAt(0);
+                                const logoColor = stringToColour(stock.symbol);
+
+                                return (
+                                    <button
+                                        key={stock.symbol}
+                                        onClick={() => handleSelect(stock)}
+                                        className="w-full px-3 py-2.5 flex items-center justify-between hover:bg-muted transition-colors text-left group"
+                                    >
+                                        <div className="flex items-center gap-3 overflow-hidden flex-1">
+                                            {/* Logo Placeholder */}
+                                            <div
+                                                className="w-8 h-8 rounded-full flex items-center justify-center shadow-sm border border-black/10 dark:border-white/10 shrink-0"
+                                                style={{ backgroundColor: `${logoColor}20`, color: logoColor }}
+                                            >
+                                                <span className="font-bold text-xs">{initial}</span>
+                                            </div>
+
+                                            <div className="flex flex-col truncate">
+                                                <span className="font-bold text-foreground flex items-center gap-1.5 text-xs">
+                                                    {highlightText(stock.symbol, query)}
+                                                    <span className="text-[9px] px-1 py-0.5 rounded bg-muted text-muted-foreground uppercase font-medium border border-border/50">NSE</span>
+                                                    {stock.sector && (
+                                                        <span className="text-[9px] px-1 py-0.5 rounded text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/40 uppercase font-medium">{stock.sector}</span>
+                                                    )}
+                                                </span>
+                                                <span className="text-[10px] text-muted-foreground truncate max-w-[200px] mt-0.5">
+                                                    {highlightText(stock.name, query)}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {/* Right Side Hover State */}
+                                        <div className="hidden group-hover:flex items-center gap-1.5 shrink-0 ml-2">
+                                            <div className="text-[10px] uppercase font-bold text-primary bg-primary/10 px-2 py-1 rounded transition-all tracking-wider flex items-center gap-1">
+                                                <span>Add</span>
+                                            </div>
+                                        </div>
+                                        <TrendingUp className="h-4 w-4 text-muted-foreground/30 group-hover:hidden transition-colors shrink-0 ml-2" />
+                                    </button>
+                                );
+                            })}
                         </div>
                     ) : (
                         <div className="p-8 text-center">

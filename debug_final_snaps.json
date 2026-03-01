@@ -1,0 +1,42 @@
+[
+  {
+    "user_id": "920e0b18-9140-4cfa-a497-bd0705349a6a",
+    "rank": 1,
+    "equity": 1540000,
+    "profiles": {
+      "username": "MyPaperTrader"
+    }
+  },
+  {
+    "user_id": "7f31d124-bbe8-4c37-9412-57c4315db640",
+    "rank": 2,
+    "equity": 500000,
+    "profiles": {
+      "username": "DiamondHands"
+    }
+  },
+  {
+    "user_id": "7b69f6e1-cd8f-4fa3-b8be-9b9d31a927cc",
+    "rank": 3,
+    "equity": 120000,
+    "profiles": {
+      "username": "NiftyScalper"
+    }
+  },
+  {
+    "user_id": "8e31e684-b50f-4436-a147-41455c08ed6b",
+    "rank": 4,
+    "equity": 104388.32421993322,
+    "profiles": {
+      "username": "BlessingBeast"
+    }
+  },
+  {
+    "user_id": "5c33f409-ab30-41f9-a6d0-b60c73e8e52c",
+    "rank": 5,
+    "equity": 50000,
+    "profiles": {
+      "username": "PaperHands"
+    }
+  }
+]

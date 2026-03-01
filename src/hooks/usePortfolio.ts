@@ -3,11 +3,14 @@ import { useState, useEffect } from 'react';
 import { Position } from '@/types';
 
 export interface DashboardPosition extends Position {
-    ltp?: number;
-    current?: number;
-    invested?: number;
-    pnl?: number;
-    percent?: number;
+    ltp: number;
+    current: number;
+    invested: number;
+    pnl: number;
+    percent: number;
+    ticker?: string;
+    is_fo?: boolean;
+    is_live?: boolean;
 }
 
 interface PortfolioData {
@@ -17,12 +20,14 @@ interface PortfolioData {
     totalPnL: number;
     realizedPnL: number;
     unrealizedPnL: number;
+    marginLocked: number;
     dayPnL: number;
     dayPnLPercent: number;
     holdings: DashboardPosition[];
     loading: boolean;
     error: string | null;
     refresh: () => void;
+    _debug?: any;
 }
 
 export function usePortfolio(): PortfolioData {
@@ -31,35 +36,40 @@ export function usePortfolio(): PortfolioData {
     const [error, setError] = useState<string | null>(null);
     const [trigger, setTrigger] = useState(0);
 
-    useEffect(() => {
-        const fetchPortfolio = async () => {
-            try {
-                setLoading(true);
-                const res = await fetch('/api/portfolio');
-                if (!res.ok) {
-                    if (res.status === 401) {
-                        setLoading(false);
-                        return; // Not logged in
-                    }
-                    throw new Error('Failed to fetch portfolio');
-                }
-                const json = await res.json();
-                setData(json);
-            } catch (err: any) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
+    const fetchPortfolio = async (silent = false) => {
+        try {
+            if (!silent) setLoading(true);
+            const res = await fetch('/api/portfolio', { cache: 'no-store' });
+            if (!res.ok) {
+                if (res.status === 401) return;
+                throw new Error('Failed to fetch portfolio data');
             }
-        };
+            const json = await res.json();
+            setData(json);
+            setError(null);
+        } catch (err: any) {
+            console.error('usePortfolio Error:', err);
+            setError(err.message);
+        } finally {
+            if (!silent) setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        // Auto-settle expired F&O contracts silently in the background
+        fetch('/api/trade/settle', { method: 'POST' }).catch(() => { });
 
         fetchPortfolio();
+
+        // Professional Live Refresh: 5 seconds
+        const interval = setInterval(() => {
+            fetchPortfolio(true);
+        }, 5000);
+
+        return () => clearInterval(interval);
     }, [trigger]);
 
     const refresh = () => setTrigger(prev => prev + 1);
-
-    // Calculate generic day PnL (using unrealized as proxy for now as per API)
-    const dayPnL = data?.unrealizedPnL || 0;
-    const dayPnLPercent = data?.invested > 0 ? (dayPnL / data.invested) * 100 : 0;
 
     return {
         balance: data?.balance || 0,
@@ -68,11 +78,13 @@ export function usePortfolio(): PortfolioData {
         totalPnL: data?.totalPnL || 0,
         realizedPnL: data?.realizedPnL || 0,
         unrealizedPnL: data?.unrealizedPnL || 0,
-        dayPnL,
-        dayPnLPercent,
+        marginLocked: data?.marginLocked || 0,
+        dayPnL: data?.unrealizedPnL || 0,
+        dayPnLPercent: data?.invested > 0 ? (data.unrealizedPnL / data.invested) * 100 : 0,
         holdings: data?.holdings || [],
         loading,
         error,
-        refresh
+        refresh,
+        _debug: data?._debug
     };
 }

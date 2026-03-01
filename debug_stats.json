@@ -1,0 +1,17 @@
+{
+  "stats": {
+    "user_id": "8e31e684-b50f-4436-a147-41455c08ed6b",
+    "total_return_pct": 0.24555438815167396,
+    "total_pnl": 255.70222281132806,
+    "equity": 104388.32421993322,
+    "trades_count": 0,
+    "win_rate": 0,
+    "max_drawdown": 0,
+    "best_trade": 0,
+    "worst_trade": 0,
+    "fno_pnl": -380.0639067336918,
+    "stock_pnl": 1242,
+    "updated_at": "2026-02-28T14:54:42.862+00:00"
+  },
+  "snap": null
+}

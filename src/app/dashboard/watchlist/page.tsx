@@ -10,7 +10,11 @@ import { cn } from '@/lib/utils';
 import { Sparkline } from '@/components/dashboard/Sparkline';
 import { toast } from 'sonner';
 
-const WATCHLIST_GROUPS = ['Intraday', 'Long Term', 'F&O', 'Watchlist 4', 'Watchlist 5'];
+type WatchlistGroup = {
+    id: string;
+    name: string;
+    symbols: string[];
+};
 
 function WatchlistRow({
     symbol,
@@ -162,19 +166,28 @@ function WatchlistRow({
 }
 
 export default function WatchlistPage() {
-    const [activeTab, setActiveTab] = useState(WATCHLIST_GROUPS[0]);
-    const [symbols, setSymbols] = useState<string[]>([]);
+    const [groups, setGroups] = useState<WatchlistGroup[]>([]);
+    const [activeGroupId, setActiveGroupId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+
+    const activeGroup = groups.find(g => g.id === activeGroupId);
+    const activeGroupName = activeGroup?.name || 'Watchlist';
+    const symbols = activeGroup?.symbols || [];
 
     // Polling every 5 seconds for Real-time Feel!
     const { data: marketData } = useMarketData(symbols, 5000);
 
-    const fetchWatchlist = async (listName: string) => {
+    const fetchWatchlist = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`/api/watchlist?list_name=${encodeURIComponent(listName)}`);
+            const res = await fetch('/api/watchlist');
             const data = await res.json();
-            if (Array.isArray(data)) setSymbols(data);
+            if (Array.isArray(data)) {
+                setGroups(data);
+                if (data.length > 0 && !activeGroupId) {
+                    setActiveGroupId(data[0].id);
+                }
+            }
         } catch (e) {
             console.error(e);
         } finally {
@@ -183,44 +196,48 @@ export default function WatchlistPage() {
     };
 
     useEffect(() => {
-        fetchWatchlist(activeTab);
-    }, [activeTab]);
+        fetchWatchlist();
+    }, []);
 
     const removeFromWatchlist = async (symbol: string) => {
+        if (!activeGroupId) return;
         try {
             const res = await fetch('/api/watchlist', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ symbol, list_name: activeTab })
+                body: JSON.stringify({ action: 'remove_symbol', symbol, group_id: activeGroupId })
             });
             if (!res.ok) {
                 const err = await res.json();
                 throw new Error(err.error || 'Failed to remove');
             }
-            setSymbols(prev => prev.filter(s => s !== symbol));
-            toast.success(`${symbol} removed from ${activeTab}`);
+            // Optimistic update
+            setGroups(prev => prev.map(g => g.id === activeGroupId ? { ...g, symbols: g.symbols.filter(s => s !== symbol) } : g));
+            toast.success(`${symbol} removed from ${activeGroupName}`);
         } catch (e) {
             console.error(e);
         }
     };
 
     const addToWatchlist = async (symbol: string) => {
+        if (!activeGroupId) return;
         if (symbols.includes(symbol)) {
-            toast.info(`${symbol} is already in ${activeTab}`);
+            toast.info(`${symbol} is already in ${activeGroupName}`);
             return;
         }
         try {
             const res = await fetch('/api/watchlist', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ symbol, list_name: activeTab })
+                body: JSON.stringify({ action: 'add_symbol', symbol, group_id: activeGroupId })
             });
             if (!res.ok) {
                 const err = await res.json();
                 throw new Error(err.error || 'Failed to add symbol');
             }
-            setSymbols(prev => [...prev, symbol]);
-            toast.success(`${symbol} added to ${activeTab}`);
+            // Optimistic update
+            setGroups(prev => prev.map(g => g.id === activeGroupId ? { ...g, symbols: [...g.symbols, symbol] } : g));
+            toast.success(`${symbol} added to ${activeGroupName}`);
         } catch (e) {
             console.error(e);
             toast.error('Failed to add symbol');
@@ -239,25 +256,25 @@ export default function WatchlistPage() {
             <Card className="border shadow-sm bg-card p-1">
                 {/* Tabs */}
                 <div className="flex overflow-x-auto no-scrollbar border-b border-border/50">
-                    {WATCHLIST_GROUPS.map((group) => (
+                    {groups.map((group) => (
                         <button
-                            key={group}
-                            onClick={() => setActiveTab(group)}
+                            key={group.id}
+                            onClick={() => setActiveGroupId(group.id)}
                             className={cn(
                                 "px-6 py-3 text-sm font-semibold whitespace-nowrap border-b-2 transition-colors",
-                                activeTab === group
+                                activeGroupId === group.id
                                     ? "border-primary text-primary"
                                     : "border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/30"
                             )}
                         >
-                            {group}
+                            {group.name}
                         </button>
                     ))}
                 </div>
 
                 <div className="p-4 bg-muted/10 border-b">
                     <div className="w-full max-w-md">
-                        <StockSearch onSelect={addToWatchlist} placeholder={`Search and add to ${activeTab}...`} />
+                        <StockSearch onSelect={addToWatchlist} placeholder={`Search and add to ${activeGroupName}...`} />
                     </div>
                 </div>
 
@@ -271,26 +288,26 @@ export default function WatchlistPage() {
                 {loading ? (
                     <div className="py-24 text-center">
                         <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary mb-4" />
-                        <p className="text-muted-foreground text-sm">Loading {activeTab}...</p>
+                        <p className="text-muted-foreground text-sm">Loading {activeGroupName}...</p>
                     </div>
                 ) : symbols.length === 0 ? (
                     <div className="py-24 text-center">
                         <Star className="h-10 w-10 mx-auto text-muted-foreground/30 mb-4" />
                         <h3 className="text-sm font-medium text-foreground">Nothing to watch</h3>
                         <p className="text-muted-foreground text-xs mt-1 max-w-xs mx-auto">
-                            Use the search bar above to add stocks to {activeTab}.
+                            Use the search bar above to add stocks to {activeGroupName}.
                         </p>
                     </div>
                 ) : (
                     <div className="flex flex-col">
-                        {symbols.map((symbol) => {
+                        {Array.from(new Set(symbols)).map((symbol) => {
                             const stock = marketData.find(s => s.symbol === symbol) || {
                                 symbol, price: 0, change: 0, changePercent: 0, name: 'Loading...'
                             };
 
                             return (
                                 <WatchlistRow
-                                    key={`${activeTab}-${symbol}`}
+                                    key={`${activeGroupId}-${symbol}`}
                                     symbol={symbol}
                                     stock={stock}
                                     onRemove={removeFromWatchlist}

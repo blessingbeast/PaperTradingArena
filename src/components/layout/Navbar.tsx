@@ -7,12 +7,15 @@ import { useState, useEffect } from 'react';
 import { User, LogOut, Settings, LayoutDashboard, WalletCards } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { usePortfolio } from '@/hooks/usePortfolio';
+import { usePathname } from 'next/navigation';
 
 export function Navbar() {
     const { user, signOut } = useAuth();
     const { balance } = usePortfolio();
     const [menuOpen, setMenuOpen] = useState(false);
     const [isMarketOpen, setIsMarketOpen] = useState(false);
+    const pathname = usePathname();
+    const isHomePage = pathname === '/';
 
     // Calculate market status dynamically
     useEffect(() => {
@@ -41,38 +44,78 @@ export function Navbar() {
 
                 {/* Left Side: Logo (Mobile Only) & Search Mock */}
                 <div className="flex items-center gap-4 flex-1">
-                    <Link href="/" className="font-bold text-xl flex items-center gap-2 md:hidden tracking-tight">
-                        <span className="text-primary">TradeSim</span>
+                    <Link href="/" className="font-bold text-[22px] flex items-center gap-2 tracking-[0.5px] group">
+                        {/* Minimal Candlestick Upward Arrow Logo */}
+                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" className="group-hover:drop-shadow-[0_0_8px_rgba(56,189,248,0.5)] transition-all duration-300">
+                            <rect width="28" height="28" rx="6" fill="url(#paint0_linear)" />
+                            <path d="M14 6V22" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+                            <path d="M10 10H18V18H10V10Z" fill="white" />
+                            <path d="M14 6L10 10H18L14 6Z" fill="white" />
+                            <defs>
+                                <linearGradient id="paint0_linear" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+                                    <stop stopColor="#1E40AF" />
+                                    <stop offset="1" stopColor="#38BDF8" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1E40AF] to-[#38BDF8] dark:from-white dark:to-white">
+                            PaperTradingArena
+                        </span>
                     </Link>
 
                     {/* Minimal decorative links if not logged in */}
                     {!user && (
-                        <div className="hidden md:flex items-center gap-6 text-sm font-medium">
-                            <Link href="/features" className="text-muted-foreground hover:text-foreground transition-colors">Features</Link>
-                            <Link href="/learn" className="text-muted-foreground hover:text-foreground transition-colors">Learn</Link>
-                            <Link href="/leaderboard" className="text-muted-foreground hover:text-foreground transition-colors">Leaderboard</Link>
+                        <div className="hidden md:flex items-center absolute left-1/2 -translate-x-1/2 gap-8 text-sm font-semibold tracking-wide">
+                            <Link href="/features" className="text-muted-foreground relative hover:text-foreground hover:text-[#2563EB] transition-colors after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-[#2563EB] hover:after:scale-x-100 after:transition-transform after:origin-left">Features</Link>
+                            <Link href="/leaderboard" className="text-muted-foreground relative hover:text-foreground hover:text-[#2563EB] transition-colors after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-[#2563EB] hover:after:scale-x-100 after:transition-transform after:origin-left">Leaderboard</Link>
+                            <Link href="/pricing" className="text-muted-foreground relative hover:text-foreground hover:text-[#2563EB] transition-colors after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-[#2563EB] hover:after:scale-x-100 after:transition-transform after:origin-left">Pricing</Link>
+                            <Link href="/learn" className="text-muted-foreground relative hover:text-foreground hover:text-[#2563EB] transition-colors after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-[#2563EB] hover:after:scale-x-100 after:transition-transform after:origin-left">Learn</Link>
                         </div>
                     )}
                 </div>
 
                 {/* Right Side: Status, Balance, Theme, Profile */}
                 <div className="flex items-center gap-3">
+                    {/* Unauthenticated Home Page State */}
+                    {!user && isHomePage && (
+                        <div className="hidden md:flex items-center gap-2">
+                            <div className="flex items-center gap-2 px-4 py-1.5 rounded-md bg-secondary border border-border mr-1">
+                                <WalletCards className="w-4 h-4 text-muted-foreground" />
+                                <span className="text-sm font-bold font-mono">₹10,00,000.00</span>
+                            </div>
+                            <Link href="/signup">
+                                <Button size="sm" className="bg-gradient-to-r from-[#1E40AF] to-[#38BDF8] text-white hover:opacity-90 transition-all hover:scale-[1.02] shadow-[0_0_15px_rgba(37,99,235,0.3)] border-0">
+                                    Start Trading
+                                </Button>
+                            </Link>
+                        </div>
+                    )}
+
                     {user ? (
                         <>
                             {/* Market Status */}
-                            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary text-xs font-semibold mr-2 border">
-                                <span className={`h-2 w-2 rounded-full ${isMarketOpen ? 'bg-profit animate-pulse' : 'bg-muted-foreground'}`}></span>
-                                <span className="text-secondary-foreground">{isMarketOpen ? 'MARKET OPEN' : 'MARKET CLOSED'}</span>
-                            </div>
+                            {!isHomePage && (
+                                <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary text-xs font-semibold mr-2 border">
+                                    <span className={`h-2 w-2 rounded-full ${isMarketOpen ? 'bg-profit animate-pulse' : 'bg-muted-foreground'}`}></span>
+                                    <span className="text-secondary-foreground">{isMarketOpen ? 'MARKET OPEN' : 'MARKET CLOSED'}</span>
+                                </div>
+                            )}
 
                             {/* Balance Display */}
-                            {balance !== undefined && (
-                                <div className="hidden md:flex items-center gap-2 px-4 py-1.5 rounded-md bg-secondary border">
+                            {(isHomePage || balance !== undefined) && (
+                                <div className="hidden md:flex items-center gap-2 px-4 py-1.5 rounded-md bg-secondary border mr-2">
                                     <WalletCards className="w-4 h-4 text-muted-foreground" />
                                     <span className="text-sm font-bold font-mono">
-                                        ₹{balance.toLocaleString('en-IN', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
+                                        {isHomePage ? "₹10,00,000.00" : `₹${balance?.toLocaleString('en-IN', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}`}
                                     </span>
                                 </div>
+                            )}
+
+                            {/* Home Page Call To Action for Logged In User */}
+                            {isHomePage && (
+                                <Link href="/dashboard" className="hidden md:block mr-2">
+                                    <Button size="sm" className="bg-gradient-to-r from-[#1E40AF] to-[#38BDF8] text-white hover:opacity-90 transition-all hover:scale-[1.02] shadow-[0_0_15px_rgba(37,99,235,0.3)] border-0">Start Trading</Button>
+                                </Link>
                             )}
 
                             {/* Theme Toggle */}
@@ -136,12 +179,18 @@ export function Navbar() {
                         </>
                     ) : (
                         <>
+                            <div className="hidden md:flex items-center gap-2 px-4 py-1.5 rounded-md bg-secondary border mr-2">
+                                <WalletCards className="w-4 h-4 text-muted-foreground" />
+                                <span className="text-sm font-bold font-mono text-foreground">
+                                    ₹10,00,000.00
+                                </span>
+                            </div>
                             <ThemeToggle />
-                            <Link href="/login">
-                                <Button variant="outline" size="sm" className="hidden sm:inline-flex">Log In</Button>
+                            <Link href="/login" className="hidden md:inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mr-2">
+                                Login
                             </Link>
                             <Link href="/signup">
-                                <Button size="sm">Get Started</Button>
+                                <Button size="sm" className="bg-gradient-to-r from-[#1E40AF] to-[#38BDF8] text-white hover:opacity-90 transition-all hover:scale-[1.02] shadow-[0_0_15px_rgba(37,99,235,0.3)]">Start Trading</Button>
                             </Link>
                         </>
                     )}
