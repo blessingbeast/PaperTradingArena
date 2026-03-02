@@ -76,20 +76,7 @@ export function Navbar() {
 
                 {/* Right Side: Status, Balance, Theme, Profile */}
                 <div className="flex items-center gap-3">
-                    {/* Unauthenticated Home Page State */}
-                    {!user && isHomePage && (
-                        <div className="hidden md:flex items-center gap-2">
-                            <div className="flex items-center gap-2 px-4 py-1.5 rounded-md bg-secondary border border-border mr-1">
-                                <WalletCards className="w-4 h-4 text-muted-foreground" />
-                                <span className="text-sm font-bold font-mono">₹10,00,000.00</span>
-                            </div>
-                            <Link href="/signup">
-                                <Button size="sm" className="bg-gradient-to-r from-[#1E40AF] to-[#38BDF8] text-white hover:opacity-90 transition-all hover:scale-[1.02] shadow-[0_0_15px_rgba(37,99,235,0.3)] border-0">
-                                    Start Trading
-                                </Button>
-                            </Link>
-                        </div>
-                    )}
+
 
                     {user ? (
                         <>
@@ -179,23 +166,26 @@ export function Navbar() {
                         </>
                     ) : (
                         <>
-                            <div className="hidden md:flex items-center gap-2 px-4 py-1.5 rounded-md bg-secondary border mr-2">
-                                <WalletCards className="w-4 h-4 text-muted-foreground" />
-                                <span className="text-sm font-bold font-mono text-foreground">
-                                    ₹10,00,000.00
-                                </span>
-                            </div>
-                            <ThemeToggle />
-                            <Link href="/login" className="hidden md:inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mr-2">
-                                Login
-                            </Link>
-                            <Link href="/signup">
-                                <Button size="sm" className="bg-gradient-to-r from-[#1E40AF] to-[#38BDF8] text-white hover:opacity-90 transition-all hover:scale-[1.02] shadow-[0_0_15px_rgba(37,99,235,0.3)]">Start Trading</Button>
-                            </Link>
-                        </>
+                            <>
+                                {isHomePage && (
+                                    <div className="hidden md:flex items-center gap-2 px-4 py-1.5 rounded-md bg-secondary border mr-2">
+                                        <WalletCards className="w-4 h-4 text-muted-foreground" />
+                                        <span className="text-sm font-bold font-mono text-foreground">
+                                            ₹10,00,000.00
+                                        </span>
+                                    </div>
+                                )}
+                                <ThemeToggle />
+                                <Link href="/login" className="hidden md:inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mr-2">
+                                    Login
+                                </Link>
+                                <Link href="/signup">
+                                    <Button size="sm" className="bg-gradient-to-r from-[#1E40AF] to-[#38BDF8] text-white hover:opacity-90 transition-all hover:scale-[1.02] shadow-[0_0_15px_rgba(37,99,235,0.3)] border-0">Start Trading</Button>
+                                </Link>
+                            </>
                     )}
+                        </div>
                 </div>
-            </div>
         </nav>
     );
 }

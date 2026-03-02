@@ -42,11 +42,25 @@ export async function GET(request: Request) {
             let ticker = '';
             try {
                 if (p.is_fo) {
-                    ticker = mapToYahooTicker(p.underlying_symbol || p.symbol, p.expiry_date, p.strike_price, p.option_type);
+                    let underlying = p.underlying_symbol || p.symbol.replace(/[0-9].*$/, '');
+                    if (underlying === 'NIFTY') ticker = '^NSEI';
+                    else if (underlying === 'BANKNIFTY') ticker = '^NSEBANK';
+                    else if (underlying === 'FINNIFTY') ticker = '^CNXFIN';
+                    else ticker = underlying.includes('.') ? underlying : `${underlying}.NS`;
+
+                    debugInfo[p.symbol] = {
+                        ticker,
+                        asset_class: 'FO',
+                        original_symbol: p.symbol,
+                        is_fo: true,
+                        expiry: p.expiry_date,
+                        strike: p.strike_price,
+                        type: p.option_type
+                    };
                 } else {
                     ticker = p.symbol.includes('.') ? p.symbol : `${p.symbol}.NS`;
+                    debugInfo[p.symbol] = { ticker, asset_class: 'EQ', original_symbol: p.symbol, is_fo: false };
                 }
-                debugInfo[p.symbol] = { ticker, asset_class: p.is_fo ? 'FO' : 'EQ' };
                 return ticker;
             } catch (err) {
                 console.error(`[PortfolioAPI] Error mapping ticker for ${p.symbol}:`, err);
@@ -54,11 +68,12 @@ export async function GET(request: Request) {
             }
         }).filter(t => t !== null) as string[];
 
-
         // 4. Batch Fetch Market Data (Strictly Yahoo)
         const marketQuotes = new Map();
-        if (yahooTickers.length > 0) {
-            await Promise.all(yahooTickers.map(async (ticker) => {
+        const uniqueTickers = [...new Set(yahooTickers)];
+
+        if (uniqueTickers.length > 0) {
+            await Promise.all(uniqueTickers.map(async (ticker) => {
                 try {
                     const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=1d`, { next: { revalidate: 60 } });
                     const data = await res.json();
@@ -83,8 +98,47 @@ export async function GET(request: Request) {
         let totalUnrealizedPnL = 0;
 
         const holdings = unifiedPositions.map(pos => {
-            const ticker = debugInfo[pos.symbol]?.ticker;
-            const ltp = marketQuotes.get(ticker) || 0;
+            const info = debugInfo[pos.symbol];
+            const ticker = info?.ticker;
+            let ltp = marketQuotes.get(ticker) || 0;
+
+            // Calculate simulated option price if it's an F&O position
+            if (info?.is_fo && ltp > 0) {
+                const r = 0.07;
+                const v = 0.15;
+                const now = new Date();
+                const expiryDate = new Date(info.expiry);
+                expiryDate.setHours(15, 30, 0, 0);
+
+                const msPerYear = 365 * 24 * 60 * 60 * 1000;
+                let T = (expiryDate.getTime() - now.getTime()) / msPerYear;
+                if (T <= 0) T = 0.0001;
+
+                const S = ltp;
+                const K = info.strike;
+
+                function CND(x: number) {
+                    const a1 = 0.31938153, a2 = -0.356563782, a3 = 1.781477937, a4 = -1.821255978, a5 = 1.330274429;
+                    const L = Math.abs(x);
+                    const K_c = 1.0 / (1.0 + 0.2316419 * L);
+                    let w = 1.0 - 1.0 / Math.sqrt(2 * Math.PI) * Math.exp(-L * L / 2) * (a1 * K_c + a2 * K_c * K_c + a3 * Math.pow(K_c, 3) + a4 * Math.pow(K_c, 4) + a5 * Math.pow(K_c, 5));
+                    if (x < 0) w = 1.0 - w;
+                    return w;
+                }
+
+                const d1 = (Math.log(S / K) + (r + v * v / 2) * T) / (v * Math.sqrt(T));
+                const d2 = d1 - v * Math.sqrt(T);
+
+                let optPrice = 0;
+                if (info.type === 'CE' || info.type === 'C') {
+                    optPrice = S * CND(d1) - K * Math.exp(-r * T) * CND(d2);
+                } else {
+                    optPrice = K * Math.exp(-r * T) * CND(-d2) - S * CND(-d1);
+                }
+
+                ltp = Math.max(0.05, Number(optPrice.toFixed(2)));
+            }
+
             const lotSize = pos.lot_size || getLotSize(pos.symbol);
             const totalUnits = pos.qty; // POS already stores total units
 

@@ -53,7 +53,11 @@ export async function POST(request: Request) {
         // 1. Fetch REAL Market Price (Validator)
         let yfTicker = '';
         if (resolvedAssetClass === 'FO') {
-            yfTicker = mapToYahooTicker(underlying_symbol || symbol, expiry_date, strike_price, option_type);
+            let underlying = underlying_symbol || symbol.replace(/[0-9].*$/, '');
+            if (underlying === 'NIFTY') yfTicker = '^NSEI';
+            else if (underlying === 'BANKNIFTY') yfTicker = '^NSEBANK';
+            else if (underlying === 'FINNIFTY') yfTicker = '^CNXFIN';
+            else yfTicker = underlying.includes('.') ? underlying : `${underlying}.NS`;
         } else {
             yfTicker = symbol.includes('.') ? symbol : `${symbol}.NS`;
         }
@@ -61,6 +65,43 @@ export async function POST(request: Request) {
         const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${yfTicker}?interval=1d&range=1d`, { cache: 'no-store' });
         const data = await res.json();
         let marketPrice = data?.chart?.result?.[0]?.meta?.regularMarketPrice || null;
+
+        // Apply Black-Scholes Simulation if it's an Option
+        if (resolvedAssetClass === 'FO' && marketPrice > 0) {
+            const r = 0.07;
+            const v = 0.15;
+            const now = new Date();
+            const expDate = new Date(expiry_date);
+            expDate.setHours(15, 30, 0, 0);
+
+            const msPerYear = 365 * 24 * 60 * 60 * 1000;
+            let T = (expDate.getTime() - now.getTime()) / msPerYear;
+            if (T <= 0) T = 0.0001;
+
+            const S = marketPrice;
+            const K = strike_price;
+
+            function CND(x: number) {
+                const a1 = 0.31938153, a2 = -0.356563782, a3 = 1.781477937, a4 = -1.821255978, a5 = 1.330274429;
+                const L = Math.abs(x);
+                const K_c = 1.0 / (1.0 + 0.2316419 * L);
+                let w = 1.0 - 1.0 / Math.sqrt(2 * Math.PI) * Math.exp(-L * L / 2) * (a1 * K_c + a2 * K_c * K_c + a3 * Math.pow(K_c, 3) + a4 * Math.pow(K_c, 4) + a5 * Math.pow(K_c, 5));
+                if (x < 0) w = 1.0 - w;
+                return w;
+            }
+
+            const d1 = (Math.log(S / K) + (r + v * v / 2) * T) / (v * Math.sqrt(T));
+            const d2 = d1 - v * Math.sqrt(T);
+
+            let optPrice = 0;
+            if (option_type === 'CE' || option_type === 'C') {
+                optPrice = S * CND(d1) - K * Math.exp(-r * T) * CND(d2);
+            } else {
+                optPrice = K * Math.exp(-r * T) * CND(-d2) - S * CND(-d1);
+            }
+
+            marketPrice = Math.max(0.05, Number(optPrice.toFixed(2)));
+        }
 
         // Validation: Block if symbol not found or price < 0.05 (NSE minimum tick)
         if (!marketPrice || marketPrice < 0.05) {
