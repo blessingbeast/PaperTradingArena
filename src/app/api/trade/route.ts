@@ -66,41 +66,45 @@ export async function POST(request: Request) {
         const data = await res.json();
         let marketPrice = data?.chart?.result?.[0]?.meta?.regularMarketPrice || null;
 
-        // Apply Black-Scholes Simulation if it's an Option
-        if (resolvedAssetClass === 'FO' && marketPrice > 0) {
-            const r = 0.07;
-            const v = 0.15;
-            const now = new Date();
-            const expDate = new Date(expiry_date);
-            expDate.setHours(15, 30, 0, 0);
+        // Fetch Real Market Price for Options from NSE (Yahoo F&O deprecated)
+        if (resolvedAssetClass === 'FO') {
+            const nseHeaders: Record<string, string> = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'application/json',
+                'Accept-Language': 'en-US,en;q=0.5',
+            };
 
-            const msPerYear = 365 * 24 * 60 * 60 * 1000;
-            let T = (expDate.getTime() - now.getTime()) / msPerYear;
-            if (T <= 0) T = 0.0001;
+            let underlyingQuery = underlying_symbol || symbol.replace(/[0-9].*$/, '');
+            underlyingQuery = underlyingQuery.toUpperCase();
+            if (underlyingQuery === 'NIFTY') underlyingQuery = 'NIFTY';
+            else if (underlyingQuery === 'BANKNIFTY') underlyingQuery = 'BANKNIFTY';
+            else if (underlyingQuery === 'FINNIFTY') underlyingQuery = 'FINNIFTY';
 
-            const S = marketPrice;
-            const K = strike_price;
+            try {
+                const baseRes = await fetch('https://www.nseindia.com', { headers: nseHeaders, next: { revalidate: 30 } });
+                const cookies = baseRes.headers.get('set-cookie');
+                if (cookies) nseHeaders['Cookie'] = cookies.split(',').map((c: string) => c.split(';')[0]).join('; ');
 
-            function CND(x: number) {
-                const a1 = 0.31938153, a2 = -0.356563782, a3 = 1.781477937, a4 = -1.821255978, a5 = 1.330274429;
-                const L = Math.abs(x);
-                const K_c = 1.0 / (1.0 + 0.2316419 * L);
-                let w = 1.0 - 1.0 / Math.sqrt(2 * Math.PI) * Math.exp(-L * L / 2) * (a1 * K_c + a2 * K_c * K_c + a3 * Math.pow(K_c, 3) + a4 * Math.pow(K_c, 4) + a5 * Math.pow(K_c, 5));
-                if (x < 0) w = 1.0 - w;
-                return w;
+                const apiRes = await fetch(`https://www.nseindia.com/api/option-chain-indices?symbol=${underlyingQuery}`, { headers: nseHeaders, next: { revalidate: 30 } });
+                if (apiRes.ok) {
+                    const data = await apiRes.json();
+                    const records = data.records?.data || [];
+
+                    const targetExpiry = expiry_date; // Assuming YYYY-MM-DD matches NSE format from fo-utils
+                    const targetStrike = Number(strike_price);
+
+                    const record = records.find((r: any) => r.strikePrice === targetStrike && r.expiryDate === targetExpiry);
+
+                    if (record) {
+                        const optData = option_type === 'CE' ? record.CE : record.PE;
+                        if (optData && optData.lastPrice > 0) {
+                            marketPrice = optData.lastPrice;
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error('NSE Option Fetch Error for Trade Execution:', e);
             }
-
-            const d1 = (Math.log(S / K) + (r + v * v / 2) * T) / (v * Math.sqrt(T));
-            const d2 = d1 - v * Math.sqrt(T);
-
-            let optPrice = 0;
-            if (option_type === 'CE' || option_type === 'C') {
-                optPrice = S * CND(d1) - K * Math.exp(-r * T) * CND(d2);
-            } else {
-                optPrice = K * Math.exp(-r * T) * CND(-d2) - S * CND(-d1);
-            }
-
-            marketPrice = Math.max(0.05, Number(optPrice.toFixed(2)));
         }
 
         // Validation: Block if symbol not found or price < 0.05 (NSE minimum tick)

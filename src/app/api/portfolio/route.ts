@@ -68,28 +68,72 @@ export async function GET(request: Request) {
             }
         }).filter(t => t !== null) as string[];
 
-        // 4. Batch Fetch Market Data (Strictly Yahoo)
+        // 4. Batch Fetch Market Data (Strictly Yahoo for EQ/Index, NSE for Options)
         const marketQuotes = new Map();
-        const uniqueTickers = [...new Set(yahooTickers)];
 
-        if (uniqueTickers.length > 0) {
-            await Promise.all(uniqueTickers.map(async (ticker) => {
+        // 4a. Fetch Equities & Indices from Yahoo
+        const uniqueYahooTickers = [...new Set(yahooTickers.filter(t => !debugInfo[Object.keys(debugInfo).find(k => debugInfo[k].ticker === t) || ''].is_fo))];
+        if (uniqueYahooTickers.length > 0) {
+            await Promise.all(uniqueYahooTickers.map(async (ticker) => {
                 try {
                     const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=1d`, { next: { revalidate: 60 } });
                     const data = await res.json();
-
                     const price = data?.chart?.result?.[0]?.meta?.regularMarketPrice || 0;
                     marketQuotes.set(ticker, price);
-                    // Update debug info
-                    for (const sym in debugInfo) {
-                        if (debugInfo[sym].ticker === ticker) {
-                            debugInfo[sym].last_price = price;
-                        }
-                    }
                 } catch (e) {
                     marketQuotes.set(ticker, 0);
                 }
             }));
+        }
+
+        // 4b. Fetch Options from NSE India
+        const nseHeaders = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
+        };
+
+        const uniqueUnderlyings = [...new Set(unifiedPositions.filter(p => p.is_fo).map(p => p.underlying_symbol || p.symbol.replace(/[0-9].*$/, '')))];
+
+        if (uniqueUnderlyings.length > 0) {
+            try {
+                // Get NSE Session Cookies
+                const baseRes = await fetch('https://www.nseindia.com', { headers: nseHeaders, next: { revalidate: 30 } });
+                const cookies = baseRes.headers.get('set-cookie');
+                const fetchHeaders: HeadersInit = { ...nseHeaders, 'Accept': 'application/json' };
+                if (cookies) fetchHeaders['Cookie'] = cookies.split(',').map(c => c.split(';')[0]).join('; ');
+
+                // Fetch Option Chain for each underlying
+                for (const underlying of uniqueUnderlyings) {
+                    let symbolQuery = underlying.toUpperCase();
+                    if (symbolQuery === 'NIFTY') symbolQuery = 'NIFTY';
+                    else if (symbolQuery === 'BANKNIFTY') symbolQuery = 'BANKNIFTY';
+                    else if (symbolQuery === 'FINNIFTY') symbolQuery = 'FINNIFTY';
+
+                    try {
+                        const apiRes = await fetch(`https://www.nseindia.com/api/option-chain-indices?symbol=${symbolQuery}`, { headers: fetchHeaders, next: { revalidate: 30 } });
+                        if (apiRes.ok) {
+                            const data = await apiRes.json();
+                            const records = data.records?.data || [];
+
+                            // Map fetched options to portfolio positions
+                            const relatedPositions = unifiedPositions.filter(p => p.is_fo && (p.underlying_symbol || p.symbol.replace(/[0-9].*$/, '')) === underlying);
+                            for (const pos of relatedPositions) {
+                                const record = records.find((r: any) => r.strikePrice === pos.strike_price && r.expiryDate === pos.expiry_date);
+                                if (record) {
+                                    const optData = pos.option_type === 'CE' ? record.CE : record.PE;
+                                    const ltp = optData?.lastPrice || 0;
+                                    marketQuotes.set(debugInfo[pos.symbol].ticker, ltp); // Store back using the unique ticker key
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.error('NSE Option Fetch Error for', underlying, e);
+                    }
+                }
+            } catch (e) {
+                console.error('NSE Cookie Fetch Error', e);
+            }
         }
 
         // 5. Calculate Metrics
@@ -100,44 +144,10 @@ export async function GET(request: Request) {
         const holdings = unifiedPositions.map(pos => {
             const info = debugInfo[pos.symbol];
             const ticker = info?.ticker;
+
+            // For EQ, we fetch via Yahoo and stored in marketQuotes mapping. 
+            // For FO, we fetched via NSE and stored via ticker mapping above.
             let ltp = marketQuotes.get(ticker) || 0;
-
-            // Calculate simulated option price if it's an F&O position
-            if (info?.is_fo && ltp > 0) {
-                const r = 0.07;
-                const v = 0.15;
-                const now = new Date();
-                const expiryDate = new Date(info.expiry);
-                expiryDate.setHours(15, 30, 0, 0);
-
-                const msPerYear = 365 * 24 * 60 * 60 * 1000;
-                let T = (expiryDate.getTime() - now.getTime()) / msPerYear;
-                if (T <= 0) T = 0.0001;
-
-                const S = ltp;
-                const K = info.strike;
-
-                function CND(x: number) {
-                    const a1 = 0.31938153, a2 = -0.356563782, a3 = 1.781477937, a4 = -1.821255978, a5 = 1.330274429;
-                    const L = Math.abs(x);
-                    const K_c = 1.0 / (1.0 + 0.2316419 * L);
-                    let w = 1.0 - 1.0 / Math.sqrt(2 * Math.PI) * Math.exp(-L * L / 2) * (a1 * K_c + a2 * K_c * K_c + a3 * Math.pow(K_c, 3) + a4 * Math.pow(K_c, 4) + a5 * Math.pow(K_c, 5));
-                    if (x < 0) w = 1.0 - w;
-                    return w;
-                }
-
-                const d1 = (Math.log(S / K) + (r + v * v / 2) * T) / (v * Math.sqrt(T));
-                const d2 = d1 - v * Math.sqrt(T);
-
-                let optPrice = 0;
-                if (info.type === 'CE' || info.type === 'C') {
-                    optPrice = S * CND(d1) - K * Math.exp(-r * T) * CND(d2);
-                } else {
-                    optPrice = K * Math.exp(-r * T) * CND(-d2) - S * CND(-d1);
-                }
-
-                ltp = Math.max(0.05, Number(optPrice.toFixed(2)));
-            }
 
             const lotSize = pos.lot_size || getLotSize(pos.symbol);
             const totalUnits = pos.qty; // POS already stores total units
