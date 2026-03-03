@@ -1,13 +1,14 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const revalidate = 30; // Cache response for 30 seconds
 
 export async function GET(
-    request: Request,
-    { params }: { params: { symbol: string } }
+    request: NextRequest,
+    { params }: { params: Promise<{ symbol: string }> }
 ) {
     try {
-        const symbol = params.symbol.toUpperCase();
+        const resolvedParams = await params;
+        const symbol = resolvedParams.symbol.toUpperCase();
         const validSymbols = ['NIFTY', 'BANKNIFTY'];
 
         if (!validSymbols.includes(symbol)) {
