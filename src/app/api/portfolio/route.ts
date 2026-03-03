@@ -97,7 +97,7 @@ export async function GET(request: Request) {
 
         if (uniqueUnderlyings.length > 0) {
             try {
-                // Get NSE Session Cookies
+                // Get NSE Session Cookies First
                 const baseRes = await fetch('https://www.nseindia.com', { headers: nseHeaders, next: { revalidate: 30 } });
                 const cookies = baseRes.headers.get('set-cookie');
                 const fetchHeaders: HeadersInit = { ...nseHeaders, 'Accept': 'application/json' };
@@ -119,7 +119,15 @@ export async function GET(request: Request) {
                             // Map fetched options to portfolio positions
                             const relatedPositions = unifiedPositions.filter(p => p.is_fo && (p.underlying_symbol || p.symbol.replace(/[0-9].*$/, '')) === underlying);
                             for (const pos of relatedPositions) {
-                                const record = records.find((r: any) => r.strikePrice === pos.strike_price && r.expiryDate === pos.expiry_date);
+                                // Formatter for DD-MMM-YYYY
+                                const dbDate = new Date(pos.expiry_date);
+                                const day = String(dbDate.getDate()).padStart(2, '0');
+                                const month = dbDate.toLocaleString('en-GB', { month: 'short' });
+                                const year = dbDate.getFullYear();
+                                const formattedExpiry = `${day}-${month}-${year}`; // e.g. 26-Mar-2025
+
+                                const record = records.find((r: any) => Number(r.strikePrice) === Number(pos.strike_price) && (r.expiryDate === pos.expiry_date || r.expiryDate === formattedExpiry || new Date(r.expiryDate).getTime() === dbDate.getTime()));
+
                                 if (record) {
                                     const optData = pos.option_type === 'CE' ? record.CE : record.PE;
                                     const ltp = optData?.lastPrice || 0;
