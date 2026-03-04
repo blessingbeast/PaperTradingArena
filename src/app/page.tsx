@@ -10,8 +10,19 @@ import {
     LayoutDashboard, LineChart, PlayCircle, CheckCircle2, Star,
     Check, ArrowUpRight
 } from 'lucide-react';
+import { useEffect } from 'react';
 
 export default function Home() {
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const url = new URL(window.location.href);
+            if (url.searchParams.has('code')) {
+                // Supabase Auth fallback redirect if user hits homepage instead of /auth/callback directly
+                window.location.href = `/auth/callback?code=${url.searchParams.get('code')}`;
+            }
+        }
+    }, []);
     return (
         <div className="min-h-screen flex flex-col font-sans bg-[#F8FAFC] dark:bg-background selection:bg-[#2563EB]/30">
             <Navbar />

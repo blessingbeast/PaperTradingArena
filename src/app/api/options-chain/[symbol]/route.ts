@@ -15,82 +15,73 @@ export async function GET(
             return NextResponse.json({ error: 'Invalid symbol' }, { status: 400 });
         }
 
-        const url = `https://www.nseindia.com/api/option-chain-indices?symbol=${symbol}`;
+        const growwSymbol = symbol.toLowerCase();
+        const { searchParams } = new URL(request.url);
+        const requestedExpiry = searchParams.get('expiry');
 
-        const headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.9',
-            'Referer': 'https://www.nseindia.com/option-chain',
-            'Connection': 'keep-alive',
-            'Sec-Fetch-Dest': 'document',
-            'Sec-Fetch-Mode': 'navigate',
-            'Sec-Fetch-Site': 'none',
-            'Sec-Fetch-User': '?1',
-            'Upgrade-Insecure-Requests': '1'
-        };
+        const baseUrl = `https://groww.in/v1/api/option_chain_service/v1/option_chain/derivatives/${growwSymbol}`;
+        const url = requestedExpiry ? `${baseUrl}?expiry=${requestedExpiry}` : baseUrl;
 
-        const response = await fetch(url, { headers });
+        const response = await fetch(url, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            }
+        });
 
         if (!response.ok) {
-            throw new Error(`NSE blocked request with status: ${response.status}`);
+            throw new Error(`Options API blocked request with status: ${response.status}`);
         }
 
         const data = await response.json();
 
-        if (!data.records || !data.records.data) {
-            throw new Error('Invalid data format from NSE');
+        if (!data.optionChain || !data.optionChain.optionChains) {
+            throw new Error('Invalid data format from provider');
         }
 
-        const mappedData = data.records.data.map((item: any) => ({
-            strike: item.strikePrice,
-            CE: item.CE ? {
-                ltp: item.CE.lastPrice || 0,
-                oi: item.CE.openInterest || 0,
-                vol: item.CE.totalTradedVolume || 0,
-                iv: item.CE.impliedVolatility || 0,
-                delta: 0, // Not provided by NSE directly
-                theta: 0  // Not provided by NSE directly
-            } : { ltp: 0, oi: 0, vol: 0, iv: 0 },
-            PE: item.PE ? {
-                ltp: item.PE.lastPrice || 0,
-                oi: item.PE.openInterest || 0,
-                vol: item.PE.totalTradedVolume || 0,
-                iv: item.PE.impliedVolatility || 0,
+        const availableExpiries = data.optionChain.expiryDetailsDto?.expiryDates || [];
+
+        const mappedOptions = data.optionChain.optionChains.map((item: any) => ({
+            strike: item.strikePrice / 100,
+            CE: item.callOption ? {
+                ltp: item.callOption.ltp || 0,
+                oi: item.callOption.openInterest * 10 || 0, // Multiply by 10 to simulate lots sizing loosely or matching NSE scale (OptionChain divides by 100000 for Lakhs)
+                vol: item.callOption.volume || 0,
+                iv: 0,
                 delta: 0,
                 theta: 0
             } : { ltp: 0, oi: 0, vol: 0, iv: 0 },
-            expiry: item.expiryDate
+            PE: item.putOption ? {
+                ltp: item.putOption.ltp || 0,
+                oi: item.putOption.openInterest * 10 || 0,
+                vol: item.putOption.volume || 0,
+                iv: 0,
+                delta: 0,
+                theta: 0
+            } : { ltp: 0, oi: 0, vol: 0, iv: 0 }
         }));
 
-        // Group by expiry
-        const groupedByExpiry = mappedData.reduce((acc: any, curr: any) => {
-            if (!acc[curr.expiry]) {
-                acc[curr.expiry] = {
-                    expiry: curr.expiry,
-                    options: []
-                };
-            }
-            // Remove expiry field from individual option object
-            const { expiry, ...optionData } = curr;
-            acc[curr.expiry].options.push(optionData);
-            return acc;
-        }, {});
+        let activeExpiry = requestedExpiry;
+        if (!activeExpiry && availableExpiries.length > 0) {
+            activeExpiry = availableExpiries[0];
+        }
 
-        const chain = Object.values(groupedByExpiry);
-
-        // Sort strikes for each expiry
-        chain.forEach((c: any) => {
-            c.options.sort((a: any, b: any) => a.strike - b.strike);
-        });
+        let chain = [];
+        if (availableExpiries.length > 0) {
+            chain = availableExpiries.map((exp: string) => ({
+                expiry: exp,
+                options: exp === activeExpiry ? mappedOptions : []
+            }));
+        } else {
+            chain = [{ expiry: activeExpiry || 'Unknown', options: mappedOptions }];
+        }
 
         return NextResponse.json({
-            chain: chain,
-            ltp: data.records.underlyingValue || 0
+            chain,
+            ltp: data.livePrice?.value || 0
         });
 
     } catch (error) {
-        console.error('NSE Option Chain API Error:', error);
+        console.error('Option Chain API Error:', error);
         return NextResponse.json(
             { error: 'Option data temporarily unavailable.', message: error instanceof Error ? error.message : 'Unknown error' },
             { status: 503 }
