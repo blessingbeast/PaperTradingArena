@@ -187,6 +187,16 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Glassmorphism utilities */
+  .glass {
+    @apply bg-background/60 backdrop-blur-md border border-white/10 shadow-glass;
+  }
+}
+
+/* Fix Sonner Portal Z-Index overlapping with TradingView iframes */
+[data-sonner-toaster] {
+  z-index: 999999 !important;
 }
 
 /* Custom Scrollbar for modern feel */
