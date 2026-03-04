@@ -1,9 +1,10 @@
-
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
+import { Loader2 } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
 
 interface AuthContextType {
     user: User | null;
@@ -24,6 +25,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [session, setSession] = useState<Session | null>(null);
     const [loading, setLoading] = useState(true);
     const supabase = createClient();
+    const router = useRouter();
+    const pathname = usePathname();
 
     useEffect(() => {
         const setData = async () => {
@@ -38,6 +41,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setSession(session);
             setUser(session?.user ?? null);
             setLoading(false);
+
+            // Handle instantaneous redirect flows
+            if (session && (pathname === '/' || pathname === '/login' || pathname === '/signup')) {
+                router.replace('/dashboard');
+            } else if (!session && pathname.startsWith('/dashboard')) {
+                router.replace('/login');
+            }
         });
 
         setData();
@@ -45,15 +55,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return () => {
             listener.subscription.unsubscribe();
         };
-    }, [supabase]);
+    }, [supabase, pathname, router]);
 
     const signOut = async () => {
         await supabase.auth.signOut();
+        router.push('/');
     };
 
     return (
         <AuthContext.Provider value={{ user, session, loading, signOut }}>
-            {!loading && children}
+            {loading ? (
+                <div className="fixed inset-0 min-h-screen z-[100000] flex flex-col items-center justify-center bg-background/80 backdrop-blur-md">
+                    <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
+                    <h2 className="text-xl font-bold tracking-tight text-foreground animate-pulse">Authenticating...</h2>
+                </div>
+            ) : children}
         </AuthContext.Provider>
     );
 };
