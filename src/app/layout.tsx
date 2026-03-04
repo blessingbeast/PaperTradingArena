@@ -33,7 +33,7 @@ export default function RootLayout({
         >
           <AuthProvider>
             {children}
-            <Toaster position="top-center" richColors />
+            <Toaster position="top-center" richColors style={{ zIndex: 99999 }} />
           </AuthProvider>
         </ThemeProvider>
       </body>
