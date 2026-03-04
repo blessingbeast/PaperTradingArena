@@ -36,11 +36,10 @@ export default function RootLayout({
             <Toaster
               position="top-right"
               richColors
-              toastOptions={{
-                style: {
-                  zIndex: 999999,
-                  top: '80px',
-                }
+              style={{
+                top: "90px",
+                right: "20px",
+                zIndex: 99999
               }}
             />
           </AuthProvider>
