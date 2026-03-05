@@ -60,8 +60,8 @@ export function TradeDashboard({
     const initialPrice = searchParams.get('price') || '';
     const initialTradeOrderType = initialPrice ? 'LIMIT' : 'MARKET';
 
-    const [qty, setQty] = useState(1);
-    const [lotSize, setLotSize] = useState(urlLotSize || defaultLotSize);
+    const [qty, setQty] = useState<number | ''>(1);
+    const [lotSize, setLotSize] = useState<number | ''>(urlLotSize || defaultLotSize);
     const [orderType, setOrderType] = useState<'BUY' | 'SELL'>(initialAction);
     const [instrumentType, setInstrumentType] = useState<'MIS' | 'CNC'>('MIS');
     const [tradeOrderType, setTradeOrderType] = useState<'MARKET' | 'LIMIT' | 'SL' | 'SL-M'>(initialTradeOrderType);
@@ -119,7 +119,8 @@ export function TradeDashboard({
     const refPrice = tradeOrderType === 'MARKET' ? currentPrice : (Number(requestedPrice) || Number(triggerPrice) || currentPrice);
 
     // For F&O qty means lots. actual shares = qty * lotSize
-    const actualShares = qty * lotSize;
+    const numQty = Number(qty) || 0;
+    const actualShares = numQty * Number(lotSize || 1);
     const tradeValue = refPrice * actualShares;
 
     // Margin Requirements
@@ -277,7 +278,7 @@ export function TradeDashboard({
                 body: JSON.stringify({
                     symbol,
                     type: orderType,
-                    qty,
+                    qty: Number(qty) || 1,
                     price: currentPrice, // Current live market price as reference
                     instrument_type: instrumentType,
                     order_type: tradeOrderType,
@@ -526,8 +527,8 @@ export function TradeDashboard({
                                         type="number"
                                         min="1"
                                         value={qty}
-                                        onChange={(e) => setQty(Math.max(1, Number(e.target.value)))}
-                                        className="h-9 text-right font-mono"
+                                        onChange={(e) => setQty(e.target.value === '' ? '' : Math.max(1, Number(e.target.value)))}
+                                        className="h-10 text-right font-mono"
                                     />
                                     {assetClass !== 'EQ' && (
                                         <div className="flex items-center justify-between mt-1 text-[10px] text-muted-foreground">
@@ -536,8 +537,9 @@ export function TradeDashboard({
                                                 type="number"
                                                 min="1"
                                                 value={lotSize}
-                                                onChange={e => setLotSize(Math.max(1, Number(e.target.value)))}
-                                                className="h-5 w-14 text-right px-1 py-0 text-[10px]"
+                                                readOnly
+                                                disabled
+                                                className="h-5 w-14 text-right px-1 py-0 text-[10px] bg-muted cursor-not-allowed"
                                             />
                                         </div>
                                     )}
@@ -736,8 +738,9 @@ export function TradeDashboard({
                                         type="number"
                                         min="1"
                                         value={lotSize}
-                                        onChange={e => setLotSize(Math.max(1, Number(e.target.value)))}
-                                        className="h-6 w-16 text-right px-2 py-0"
+                                        readOnly
+                                        disabled
+                                        className="h-6 w-16 text-right px-2 py-0 bg-muted cursor-not-allowed"
                                     />
                                 </div>
                             )}

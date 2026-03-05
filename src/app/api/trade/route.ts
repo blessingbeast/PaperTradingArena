@@ -29,23 +29,21 @@ export async function POST(request: Request) {
         // 0.5 Market Hours validation removed for Paper Trading testing flexibility.
 
         // 1. Fetch REAL Market Price (Validator)
+        let marketPrice: number | null = payload.price ? Number(payload.price) : null;
         let yfTicker = '';
-        if (resolvedAssetClass === 'FO') {
-            let underlying = underlying_symbol || symbol.replace(/[0-9].*$/, '');
-            if (underlying === 'NIFTY') yfTicker = '^NSEI';
-            else if (underlying === 'BANKNIFTY') yfTicker = '^NSEBANK';
-            else if (underlying === 'FINNIFTY') yfTicker = '^CNXFIN';
-            else yfTicker = underlying.includes('.') ? underlying : `${underlying}.NS`;
-        } else {
+
+        if (resolvedAssetClass === 'EQ') {
             yfTicker = symbol.includes('.') ? symbol : `${symbol}.NS`;
-        }
-
-        const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${yfTicker}?interval=1d&range=1d`, { cache: 'no-store' });
-        const data = await res.json();
-        let marketPrice = data?.chart?.result?.[0]?.meta?.regularMarketPrice || null;
-
-        // Fetch Real Market Price for Options from NSE (Yahoo F&O deprecated)
-        if (resolvedAssetClass === 'FO') {
+            try {
+                const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${yfTicker}?interval=1d&range=1d`, { cache: 'no-store' });
+                const data = await res.json();
+                const yfPrice = data?.chart?.result?.[0]?.meta?.regularMarketPrice;
+                if (yfPrice) marketPrice = yfPrice;
+            } catch (e) {
+                console.error('YF Fetch Error:', e);
+            }
+        } else if (resolvedAssetClass === 'FO') {
+            // Fetch Real Market Price for Options from NSE (Yahoo F&O deprecated)
             const nseHeaders: Record<string, string> = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
                 'Accept': 'application/json',
@@ -68,7 +66,7 @@ export async function POST(request: Request) {
                     const data = await apiRes.json();
                     const records = data.records?.data || [];
 
-                    const targetExpiry = expiry_date; // Assuming YYYY-MM-DD matches NSE format from fo-utils
+                    const targetExpiry = expiry_date; // Assumed YYYY-MM-DD
                     const targetStrike = Number(strike_price);
 
                     const record = records.find((r: any) => r.strikePrice === targetStrike && r.expiryDate === targetExpiry);
@@ -81,15 +79,15 @@ export async function POST(request: Request) {
                     }
                 }
             } catch (e) {
-                console.error('NSE Option Fetch Error for Trade Execution:', e);
+                console.error('NSE Option Fetch Error for Trade Execution - safely falling back to client price:', e);
             }
         }
 
-        // Validation: Block if symbol not found or price < 0.05 (NSE minimum tick)
+        // Validation: Block if symbol not found or price < 0.05
         if (!marketPrice || marketPrice < 0.05) {
             return NextResponse.json({
                 error: `Invalid market data for ${symbol}. Market might be closed or symbol incorrect.`,
-                debug_ticker: yfTicker
+                debug_ticker: resolvedAssetClass === 'EQ' ? yfTicker : 'NSE_FO'
             }, { status: 400 });
         }
 
