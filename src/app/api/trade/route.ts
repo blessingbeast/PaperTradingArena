@@ -137,8 +137,7 @@ export async function POST(request: Request) {
             lot_size: parsedLotSize,
             status: 'EXECUTED',
             requested_price: marketPrice,
-            filled_qty: totalUnits,
-            asset_class: resolvedAssetClass
+            filled_qty: totalUnits
         }).select().single();
 
         if (orderError) throw orderError;
