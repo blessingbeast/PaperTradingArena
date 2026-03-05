@@ -330,7 +330,7 @@ export function TradeDashboard({
                 }
             } else {
                 toast.custom((t) => (
-                    <div className="bg-destructive/10 border-l-4 border-destructive rounded-r-lg shadow-xl p-4 w-[340px] flex flex-col gap-1 relative overflow-hidden">
+                    <div className="bg-card border border-border border-l-4 border-l-destructive rounded-lg shadow-xl p-4 w-[340px] flex flex-col gap-1 relative overflow-hidden">
                         <h3 className="text-destructive font-bold flex items-center gap-2">
                             <AlertCircle className="w-4 h-4" /> Order Failed
                         </h3>
@@ -340,7 +340,7 @@ export function TradeDashboard({
             }
         } catch (e: any) {
             toast.custom((t) => (
-                <div className="bg-destructive/10 border-l-4 border-destructive rounded-r-lg shadow-xl p-4 w-[340px] flex flex-col gap-1 relative overflow-hidden">
+                <div className="bg-card border border-border border-l-4 border-l-destructive rounded-lg shadow-xl p-4 w-[340px] flex flex-col gap-1 relative overflow-hidden">
                     <h3 className="text-destructive font-bold flex items-center gap-2">
                         <AlertCircle className="w-4 h-4" /> Network Error
                     </h3>
