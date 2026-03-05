@@ -94,19 +94,18 @@ export async function POST(request: Request) {
         }
 
         // 2. Quantity & Lot Size Logic
-        const lotSize = (resolvedAssetClass === 'FO') ? getLotSize(underlying_symbol || symbol) : 1;
-        const totalUnits = (resolvedAssetClass === 'FO') ? (qty * lotSize) : qty;
+        const parsedQty = Number(qty);
+        const parsedLotSize = (resolvedAssetClass === 'FO') ? getLotSize(underlying_symbol || symbol) : 1;
+        const totalUnits = (resolvedAssetClass === 'FO') ? (parsedQty * parsedLotSize) : parsedQty;
 
         // 3. Portfolio & Margin Check
         const { data: portfolio } = await supabase.from('portfolios').select('*').eq('user_id', session.user.id).maybeSingle();
 
         if (!portfolio) {
-            // Auto-initialize portfolio if missing? 
-            // For now, block with clear error or use a default
             return NextResponse.json({ error: 'Portfolio not initialized. Please visit Portfolio page first.' }, { status: 400 });
         }
 
-        const tradeValue = marketPrice * totalUnits;
+        const tradeValue = Number(marketPrice) * totalUnits;
         let requiredMargin = tradeValue;
 
         // Security Rules: Leverage boundaries to prevent overflow manipulation
@@ -120,12 +119,14 @@ export async function POST(request: Request) {
             }
         }
 
-        if (requiredMargin > portfolio.balance * 50) {
+        const numericBalance = Number(portfolio.balance);
+
+        if (requiredMargin > numericBalance * 50) {
             return NextResponse.json({ error: 'Trade rejected. Excessive leverage detected.' }, { status: 400 });
         }
 
-        if (type === 'BUY' && portfolio.balance < requiredMargin) {
-            return NextResponse.json({ error: 'Insufficient margin' }, { status: 400 });
+        if (type === 'BUY' && numericBalance < requiredMargin) {
+            return NextResponse.json({ error: `Insufficient margin. Required: ${requiredMargin.toFixed(2)}, Available: ${numericBalance.toFixed(2)}` }, { status: 400 });
         }
 
         // 4. Record Order
@@ -135,7 +136,7 @@ export async function POST(request: Request) {
             trade_type: type,
             order_type,
             qty: totalUnits, // Store units
-            lot_size: lotSize,
+            lot_size: parsedLotSize,
             status: 'EXECUTED',
             requested_price: marketPrice,
             filled_qty: totalUnits,
@@ -175,7 +176,7 @@ export async function POST(request: Request) {
                 user_id: session.user.id,
                 qty: netQty,
                 avg_price: marketPrice,
-                lot_size: lotSize
+                lot_size: parsedLotSize
             };
             if (resolvedAssetClass === 'EQ') {
                 insertPayload.symbol = symbol;
