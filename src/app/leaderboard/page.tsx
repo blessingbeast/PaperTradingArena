@@ -26,22 +26,22 @@ export default function LeaderboardPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="overflow-x-auto">
-                            <table className="w-full">
+                            <table className="w-full text-sm">
                                 <thead>
                                     <tr className="border-b dark:border-gray-800 text-left">
-                                        <th className="py-3 px-4 font-semibold">Rank</th>
-                                        <th className="py-3 px-4 font-semibold">Username</th>
-                                        <th className="py-3 px-4 font-semibold">Return %</th>
-                                        <th className="py-3 px-4 font-semibold text-right">Total PnL</th>
+                                        <th className="py-3 px-4 font-semibold text-muted-foreground">Rank</th>
+                                        <th className="py-3 px-4 font-semibold text-muted-foreground">Username</th>
+                                        <th className="py-3 px-4 font-semibold text-muted-foreground">Return %</th>
+                                        <th className="py-3 px-4 font-semibold text-muted-foreground text-right">Total PnL</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {leaders.map((user) => (
-                                        <tr key={user.rank} className="border-b dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900">
+                                        <tr key={user.rank} className="border-b dark:border-gray-800 hover:bg-muted/50">
                                             <td className="py-4 px-4 font-medium">#{user.rank}</td>
-                                            <td className="py-4 px-4 font-medium">{user.name}</td>
-                                            <td className="py-4 px-4 text-green-600 font-bold">{user.return}</td>
-                                            <td className="py-4 px-4 text-right">{user.pnl}</td>
+                                            <td className="py-4 px-4 font-bold">{user.name}</td>
+                                            <td className="py-4 px-4 text-profit font-bold">{user.return}</td>
+                                            <td className="py-4 px-4 text-right font-mono">{user.pnl}</td>
                                         </tr>
                                     ))}
                                 </tbody>

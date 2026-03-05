@@ -86,7 +86,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Summary Cards */}
-            <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
+            <div className="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
                 <Card className="hover:shadow-md transition-shadow">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Equity</CardTitle>
@@ -156,7 +156,7 @@ export default function DashboardPage() {
                         <CardDescription>Your portfolio performance over the last 30 days (Simulated).</CardDescription>
                     </CardHeader>
                     <CardContent className="pl-0">
-                        <div className="h-[300px] w-full mt-4">
+                        <div className="h-[300px] md:h-[400px] w-full mt-4">
                             <ResponsiveContainer width="100%" height="100%">
                                 <AreaChart data={mockEquityData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                                     <defs>
@@ -206,7 +206,7 @@ export default function DashboardPage() {
                         <CardDescription>Last 7 days</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className="h-[300px] w-full mt-4">
+                        <div className="h-[300px] md:h-[400px] w-full mt-4">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={mockDailyPnL}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--muted-foreground))" strokeOpacity={0.2} />

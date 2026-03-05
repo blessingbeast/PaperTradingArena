@@ -54,9 +54,9 @@ export default function OrdersPage() {
         <div className="space-y-6">
             <h1 className="text-2xl font-bold tracking-tight">Orders</h1>
 
-            <Card className="border-border/50 shadow-sm overflow-hidden">
-                <CardContent className="p-0">
-                    <div className="overflow-x-auto">
+            <Card className="border-border/50 shadow-sm">
+                <div className="overflow-x-auto">
+                    <CardContent className="p-0">
                         <table className="w-full text-sm">
                             <thead className="bg-muted/50 border-b">
                                 <tr className="text-left text-muted-foreground text-xs uppercase tracking-wider font-semibold">
@@ -140,8 +140,8 @@ export default function OrdersPage() {
                                 ))}
                             </tbody>
                         </table>
-                    </div>
-                </CardContent>
+                    </CardContent>
+                </div>
             </Card>
         </div>
     );

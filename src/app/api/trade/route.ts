@@ -26,29 +26,7 @@ export async function POST(request: Request) {
         const isFO = asset_class === 'FO' || asset_class === 'OPT' || symbol.match(/[0-9]{2}[A-Z]{3}[0-9]/);
         const resolvedAssetClass = isFO ? 'FO' : 'EQ';
 
-        // 0.5 Market Hours Anti-Cheat Validation (IST)
-        const nowUTC = new Date();
-        const istOffset = 5.5 * 60 * 60 * 1000;
-        const nowIST = new Date(nowUTC.getTime() + istOffset);
-
-        const day = nowIST.getUTCDay();
-        const hours = nowIST.getUTCHours();
-        const minutes = nowIST.getUTCMinutes();
-
-        // Block weekends
-        if (day === 0 || day === 6) {
-            return NextResponse.json({ error: 'Market is closed on weekends.' }, { status: 400 });
-        }
-
-        // Block outside 09:15 to 15:30 IST
-        const marketOpenMinutes = 9 * 60 + 15;
-        const marketCloseMinutes = 15 * 60 + 30;
-        const currentMinutes = hours * 60 + minutes;
-
-        // Disabled strictly for development flexibility or if the user is debugging. We'll leave it active for true validation.
-        if (currentMinutes < marketOpenMinutes || currentMinutes > marketCloseMinutes) {
-            return NextResponse.json({ error: 'Market is closed. Trading hours are 09:15 AM to 03:30 PM IST.' }, { status: 400 });
-        }
+        // 0.5 Market Hours validation removed for Paper Trading testing flexibility.
 
         // 1. Fetch REAL Market Price (Validator)
         let yfTicker = '';
