@@ -134,7 +134,6 @@ export async function POST(request: Request) {
             trade_type: type,
             order_type,
             qty: totalUnits, // Store units
-            lot_size: parsedLotSize,
             status: 'EXECUTED',
             requested_price: marketPrice,
             filled_qty: totalUnits
