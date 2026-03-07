@@ -42,7 +42,7 @@ export async function GET(request: Request) {
                  activePositions.push({
                      user_id: userOrders[0].user_id,
                      email: userOrders[0].users?.email || 'Unknown',
-                     symbol: state.symbol,
+                     symbol: userOrders[0].symbol,
                      net_qty: state.qty,
                      avg_price: state.avg_price,
                      entry_time: state.entry_time
