@@ -24,7 +24,7 @@ export async function POST(request: Request) {
         const resolvedAssetClass = isFO ? 'FO' : 'EQ';
 
         // 1. Validate Trading Hours (Extracted to trade-engine)
-        const marketStatus = validateMarketHours();
+        const marketStatus = await validateMarketHours();
         if (!marketStatus.isOpen && (resolvedAssetClass === 'EQ' || resolvedAssetClass === 'FO')) {
             return NextResponse.json({ error: marketStatus.reason || 'Market Closed.' }, { status: 400 });
         }

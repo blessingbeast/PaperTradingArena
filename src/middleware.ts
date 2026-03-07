@@ -2,8 +2,10 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
-    let supabaseResponse = NextResponse.next({
-        request,
+    let response = NextResponse.next({
+        request: {
+            headers: request.headers,
+        },
     });
 
     const supabase = createServerClient(
@@ -15,40 +17,67 @@ export async function middleware(request: NextRequest) {
                     return request.cookies.get(name)?.value;
                 },
                 set(name: string, value: string, options: CookieOptions) {
-                    request.cookies.set({ name, value, ...options });
-                    supabaseResponse = NextResponse.next({
-                        request: { headers: request.headers },
+                    request.cookies.set({
+                        name,
+                        value,
+                        ...options,
                     });
-                    supabaseResponse.cookies.set({ name, value, ...options });
+                    response = NextResponse.next({
+                        request: {
+                            headers: request.headers,
+                        },
+                    });
+                    response.cookies.set({
+                        name,
+                        value,
+                        ...options,
+                    });
                 },
                 remove(name: string, options: CookieOptions) {
-                    request.cookies.set({ name, value: '', ...options });
-                    supabaseResponse = NextResponse.next({
-                        request: { headers: request.headers },
+                    request.cookies.set({
+                        name,
+                        value: '',
+                        ...options,
                     });
-                    supabaseResponse.cookies.set({ name, value: '', ...options });
+                    response = NextResponse.next({
+                        request: {
+                            headers: request.headers,
+                        },
+                    });
+                    response.cookies.set({
+                        name,
+                        value: '',
+                        ...options,
+                    });
                 },
             },
         }
     );
 
-    // IMPORTANT: Avoid writing any Server Components logic here.
-    // Use getUser() instead of getSession() to securely validate the session on Edge.
+    // Refresh session if expired - required for Server Components
+    // https://supabase.com/docs/guides/auth/server-side/nextjs
     const { data: { user } } = await supabase.auth.getUser();
 
-    const isAuthPage = request.nextUrl.pathname === '/' || request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/signup';
+    // Protect Admin Routes Block
+    if (request.nextUrl.pathname.startsWith('/admin')) {
+        if (!user) {
+            return NextResponse.redirect(new URL('/login', request.url));
+        }
 
-    // Redirect authenticated users away from landing/auth pages directly to dashboard
-    if (user && isAuthPage) {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
+        // Fetch user's role block natively from DB
+        const { data: profile } = await supabase
+            .from('users')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+
+        if (!profile || profile.role !== 'admin') {
+            console.warn(`[Blocked] Unauthorized access attempt to ${request.nextUrl.pathname} by ${user.email}`);
+            return NextResponse.redirect(new URL('/dashboard', request.url));
+        }
     }
 
-    // Protect dashboard routes from unauthenticated users
-    if (!user && request.nextUrl.pathname.startsWith('/dashboard')) {
-        return NextResponse.redirect(new URL('/login', request.url));
-    }
-
-    return supabaseResponse;
+    return response;
 }
 
 export const config = {
@@ -58,9 +87,8 @@ export const config = {
          * - _next/static (static files)
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
-         * - auth/callback (OAuth exchange)
          * Feel free to modify this pattern to include more paths.
          */
-        '/((?!_next/static|_next/image|favicon.ico|auth/callback|api|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+        '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
     ],
 };

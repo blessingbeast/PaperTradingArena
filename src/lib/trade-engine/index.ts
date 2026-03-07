@@ -3,15 +3,24 @@
  * Assesses Execution validity including Market Hours and basic lot sizing algorithms.
  */
 
+import { createClient } from '@/lib/supabase/server';
+
 export interface MarketHoursResult {
     isOpen: boolean;
     reason?: string;
 }
 
-export function validateMarketHours(): MarketHoursResult {
-    const nowLocal = new Date();
+export async function validateMarketHours(): Promise<MarketHoursResult> {
+    const supabase = await createClient();
     
-    // Convert to IST safely
+    // 1. Check Global Admin Override FIRST
+    const { data: setting } = await supabase.from('system_settings').select('value').eq('key', 'market_open').single();
+    if (setting && setting.value === 'false') {
+        return { isOpen: false, reason: 'Market is currently forced CLOSED by System Administrator.' };
+    }
+
+    // 2. Standard Chronological IST Checks
+    const nowLocal = new Date();
     const istOffset = 5.5 * 60 * 60 * 1000; 
     const isNowUTC = Date.UTC(
          nowLocal.getUTCFullYear(),
@@ -27,13 +36,11 @@ export function validateMarketHours(): MarketHoursResult {
     const hour = nowIST.getUTCHours();
     const minute = nowIST.getUTCMinutes();
 
-    // Weekend Check
     if (dayOfWeek === 0 || dayOfWeek === 6) {
         return { isOpen: false, reason: 'Market is closed on weekends.' };
     }
 
     const timeHHMM = hour * 100 + minute;
-    // Market Hours: 9:15 AM (915) to 3:30 PM (1530)
     if (timeHHMM < 915 || timeHHMM >= 1530) {
         return { isOpen: false, reason: 'Market is closed. Trading hours are 9:15 AM to 3:30 PM IST.' };
     }
