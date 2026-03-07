@@ -127,6 +127,12 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: `Insufficient margin. Required: ${requiredMargin.toFixed(2)}, Available: ${numericBalance.toFixed(2)}` }, { status: 400 });
         }
 
+        // DB Schema Constraint logic for NOT NULL `instrument_type` field
+        let dbInstrumentType = 'STOCK';
+        if (resolvedAssetClass === 'FO') {
+           dbInstrumentType = option_type ? 'OPTION' : 'FUTURE';
+        }
+
         // 4. Record Order
         const { data: orderData, error: orderError } = await supabase.from('orders').insert({
             user_id: session.user.id,
@@ -136,7 +142,8 @@ export async function POST(request: Request) {
             qty: totalUnits, // Store units
             status: 'EXECUTED',
             requested_price: marketPrice,
-            filled_qty: totalUnits
+            filled_qty: totalUnits,
+            instrument_type: dbInstrumentType
         }).select().single();
 
         if (orderError) throw orderError;
