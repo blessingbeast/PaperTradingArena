@@ -26,8 +26,21 @@ export async function POST(request: Request) {
         const isFO = asset_class === 'FO' || asset_class === 'OPT' || symbol.match(/[0-9]{2}[A-Z]{3}[0-9]/);
         const resolvedAssetClass = isFO ? 'FO' : 'EQ';
 
-        // 0.5 Market Hours validation removed for Paper Trading testing flexibility.
+        // 0.5 Market Hours Validation (9:15 AM - 3:30 PM IST)
+        const now = new Date();
+        const utcToIstOffset = 5.5 * 60 * 60 * 1000;
+        const istTime = new Date(now.getTime() + utcToIstOffset);
+        const hours = istTime.getUTCHours();
+        const minutes = istTime.getUTCMinutes();
+        
+        const isMarketOpen = (hours > 9 || (hours === 9 && minutes >= 15)) &&
+                             (hours < 15 || (hours === 15 && minutes <= 30));
 
+        // Let Crypto or 24/7 mocked asset classes bypass if they exist later, 
+        // but for EQ/FO strictly enforce Indian exchange hours. 
+        if (!isMarketOpen && (resolvedAssetClass === 'EQ' || resolvedAssetClass === 'FO')) {
+            return NextResponse.json({ error: 'Market Closed. Trading hours are 9:15 AM to 3:30 PM IST.' }, { status: 400 });
+        }
         // 1. Fetch REAL Market Price (Validator)
         let marketPrice: number | null = payload.price ? Number(payload.price) : null;
         let yfTicker = '';
@@ -154,45 +167,8 @@ export async function POST(request: Request) {
         }).eq('id', portfolio.id);
         if (balError) throw balError;
 
-        // 6. Update Position
-        const table = resolvedAssetClass === 'EQ' ? 'positions' : 'fo_positions';
-        const query = supabase.from(table).select('*').eq('user_id', session.user.id);
-        if (resolvedAssetClass === 'EQ') query.eq('symbol', symbol);
-        else query.eq('contract_symbol', symbol);
-
-        const { data: existingPos } = await query.maybeSingle();
-        const netQty = type === 'BUY' ? totalUnits : -totalUnits;
-
-        if (existingPos) {
-            const newQty = (existingPos.qty || 0) + netQty;
-            if (newQty === 0) {
-                await supabase.from(table).delete().eq('id', existingPos.id);
-            } else {
-                const newAvg = (existingPos.avg_price * existingPos.qty + marketPrice * netQty) / newQty;
-                await supabase.from(table).update({
-                    qty: newQty,
-                    avg_price: Math.abs(newAvg)
-                }).eq('id', existingPos.id);
-            }
-        } else {
-            const insertPayload: any = {
-                user_id: session.user.id,
-                qty: netQty,
-                avg_price: marketPrice,
-                lot_size: parsedLotSize
-            };
-            if (resolvedAssetClass === 'EQ') {
-                insertPayload.symbol = symbol;
-                insertPayload.instrument_type = payload.instrument_type || 'CNC';
-            } else {
-                insertPayload.contract_symbol = symbol;
-                insertPayload.underlying_symbol = underlying_symbol || symbol;
-                insertPayload.option_type = option_type;
-                insertPayload.strike_price = strike_price;
-                insertPayload.expiry_date = expiry_date;
-            }
-            await supabase.from(table).insert(insertPayload);
-        }
+        // Trade execution completed successfully. Positions are dynamically derived
+        // from the `orders` table dynamically on the Portfolio & Header loads.
 
         return NextResponse.json({ success: true, order: orderData, price: marketPrice });
 

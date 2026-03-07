@@ -27,19 +27,94 @@ export async function GET(request: Request) {
             });
         }
 
-        const { data: eqPositions } = await supabase.from('positions').select('*').eq('user_id', session.user.id);
-        const { data: foPositions } = await supabase.from('fo_positions').select('*').eq('user_id', session.user.id);
+        // NEW ARCHITECTURE: Derive Active Positions purely from Executed Orders
+        const { data: executedOrders } = await supabase
+            .from('orders')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .eq('status', 'EXECUTED')
+            .order('created_at', { ascending: true }); // Process chronologically
 
-        const unifiedPositions = [
-            ...(eqPositions || []).map(p => ({ ...p, is_fo: false })),
-            ...(foPositions || []).map(p => ({ ...p, is_fo: true, symbol: p.contract_symbol }))
-        ];
+        // Map to hold aggregated running positions
+        const positionAggregates = new Map<string, any>();
 
+        (executedOrders || []).forEach(order => {
+            const isFO = (order.instrument_type === 'OPTION' || order.instrument_type === 'FUTURE' ||
+                          order.symbol.match(/[0-9]{2}[A-Z]{3}[0-9]/)) || false;
 
-        // 3. Resolve Real Tickers
+            // Normalize identifier key
+            const uniqueKey = order.symbol;
+
+            if (!positionAggregates.has(uniqueKey)) {
+                positionAggregates.set(uniqueKey, {
+                    symbol: order.symbol,
+                    is_fo: isFO,
+                    qty: 0,
+                    total_invested: 0,
+                    avg_price: 0,
+                    // Parse necessary F&O metadata directly from the symbol string if an option
+                    contract_symbol: order.symbol,
+                    underlying_symbol: isFO ? order.symbol.replace(/[0-9].*$/, '') : order.symbol,
+                    lot_size: order.lot_size || 1, // Fallback, will be corrected later
+                });
+
+                if (isFO) {
+                    // Try to guess basic metadata for NSE quoting from standard format 'NIFTY26MAR24800CE'
+                    const match = order.symbol.match(/^([A-Z]+)(\d{2}[A-Z]{3})(\d+)(CE|PE)$/);
+                    if (match) {
+                       positionAggregates.get(uniqueKey).strike_price = Number(match[3]);
+                       positionAggregates.get(uniqueKey).option_type = match[4];
+                       positionAggregates.get(uniqueKey).expiry_date = match[2]; // Raw string, NSE API usually matches raw DDMMM substring
+                    }
+                }
+            }
+
+            const currentPos = positionAggregates.get(uniqueKey);
+            const flowQty = order.trade_type === 'BUY' ? order.qty : -order.qty;
+            const absoluteFlowInvestment = order.qty * order.requested_price;
+
+            // Logic to calculate Weighted Average Price for open positions correctly
+            if (currentPos.qty === 0 && flowQty > 0) {
+                 // Opening a fresh new long position
+                 currentPos.total_invested = absoluteFlowInvestment;
+                 currentPos.avg_price = order.requested_price;
+            } else if (currentPos.qty === 0 && flowQty < 0) {
+                 // Opening a fresh short position
+                 currentPos.total_invested = absoluteFlowInvestment;
+                 currentPos.avg_price = order.requested_price;
+            } else if ((currentPos.qty > 0 && flowQty > 0) || (currentPos.qty < 0 && flowQty < 0)) {
+                 // Averaging into an existing direction
+                 currentPos.total_invested += absoluteFlowInvestment;
+                 currentPos.avg_price = currentPos.total_invested / (Math.abs(currentPos.qty) + order.qty);
+            } else {
+                 // Scaling out of a position (Taking profits/losses) - avg price technically doesn't change
+                 const currentAbsoluteQty = Math.abs(currentPos.qty);
+                 let fraction = order.qty / currentAbsoluteQty;
+                 if (fraction > 1) { // Flipped position direction completely
+                     const flipQty = order.qty - currentAbsoluteQty;
+                     currentPos.total_invested = flipQty * order.requested_price;
+                     currentPos.avg_price = order.requested_price;
+                 } else { // Partial close
+                     currentPos.total_invested -= (currentPos.total_invested * fraction); 
+                 }
+            }
+
+            currentPos.qty += flowQty;
+            
+            positionAggregates.set(uniqueKey, currentPos);
+        });
+
+        // Generate unified positions array, actively dropping any instrument that currently hashes out to exactly 0 balance.
+        let unifiedPositions = Array.from(positionAggregates.values()).filter(p => p.qty !== 0);
+
+        // 3. Resolve Real Tickers & Build Fallback LTPs
         const debugInfo: any = {};
+        const fallback_ltp: any = {};
+
         const yahooTickers = unifiedPositions.map(p => {
             let ticker = '';
+            fallback_ltp[p.symbol] = p.avg_price; // Save the derived average entry price
+
             try {
                 if (p.is_fo) {
                     let underlying = p.underlying_symbol || p.symbol.replace(/[0-9].*$/, '');
@@ -53,13 +128,11 @@ export async function GET(request: Request) {
                         asset_class: 'FO',
                         original_symbol: p.symbol,
                         is_fo: true,
-                        expiry: p.expiry_date,
-                        strike: p.strike_price,
-                        type: p.option_type
+                        fallback: p.avg_price
                     };
                 } else {
                     ticker = p.symbol.includes('.') ? p.symbol : `${p.symbol}.NS`;
-                    debugInfo[p.symbol] = { ticker, asset_class: 'EQ', original_symbol: p.symbol, is_fo: false };
+                    debugInfo[p.symbol] = { ticker, asset_class: 'EQ', original_symbol: p.symbol, is_fo: false, fallback: p.avg_price };
                 }
                 return ticker;
             } catch (err) {
@@ -144,21 +217,47 @@ export async function GET(request: Request) {
             }
         }
 
-        // 5. Calculate Metrics
+        // 5. Calculate Metrics & Auto-Expire F&O Contracts
         let totalInvested = 0;
         let currentValueSum = 0;
         let totalUnrealizedPnL = 0;
 
-        const holdings = unifiedPositions.map(pos => {
+        // Current IST Date String for Expiry Compares (YYYY-MM-DD)
+        const nowUtc = new Date();
+        const istDate = new Date(nowUtc.getTime() + (5.5 * 60 * 60 * 1000));
+        const todayISTStr = istDate.toISOString().split('T')[0];
+
+        const activeHoldings: any[] = [];
+
+        unifiedPositions.forEach(pos => {
+            // Auto-Expiration Logic (Option Contracts Only)
+            if (pos.is_fo && pos.expiry_date) {
+                // NSE Expirys are generally DD-MMM-YYYY or YYMMDD string format.
+                // We will do a generic check if the DB Date parses gracefully.
+                try {
+                    const parsedExpiry = new Date(pos.expiry_date);
+                    if (!isNaN(parsedExpiry.getTime())) {
+                        const expiryStr = parsedExpiry.toISOString().split('T')[0];
+                        if (expiryStr < todayISTStr) {
+                             // Contract has expired natively! It exists in `orders` but is dead today.
+                             // For now, we simply exclude it from the active `activeHoldings` UI payload.
+                             // A separate Cron/Settlement engine should physically write the PnL realization to the DB.
+                             return; 
+                        }
+                    }
+                } catch (e) {
+                    console.error("Failed to parse FO Expiry for Drop", pos.expiry_date);
+                }
+            }
+
             const info = debugInfo[pos.symbol];
             const ticker = info?.ticker;
 
-            // For EQ, we fetch via Yahoo and stored in marketQuotes mapping. 
-            // For FO, we fetched via NSE and stored via ticker mapping above.
-            let ltp = marketQuotes.get(ticker) || 0;
+            // Fallback LTP securely inherits from the Derived Average Entry Price if external quoting fails!
+            let ltp = marketQuotes.get(ticker) || fallback_ltp[pos.symbol] || pos.avg_price;
 
             const lotSize = pos.lot_size || getLotSize(pos.symbol);
-            const totalUnits = pos.qty; // POS already stores total units
+            const totalUnits = pos.qty; // Derived dynamically
 
             const invested = Math.abs(pos.avg_price * totalUnits);
             const current = Math.abs(ltp * totalUnits);
@@ -171,7 +270,7 @@ export async function GET(request: Request) {
             currentValueSum += current;
             totalUnrealizedPnL += pnl;
 
-            return {
+            activeHoldings.push({
                 ...pos,
                 ltp: ltp || 0,
                 ticker,
@@ -180,8 +279,9 @@ export async function GET(request: Request) {
                 pnl,
                 percent: invested > 0 ? (pnl / invested) * 100 : 0,
                 lot_size: lotSize,
-                is_live: ltp > 0
-            };
+                is_live: ltp > 0,
+                is_fallback: !marketQuotes.has(ticker)
+            });
         });
 
         return NextResponse.json({
@@ -191,7 +291,7 @@ export async function GET(request: Request) {
             realizedPnL: portfolio.total_pnl || 0,
             unrealizedPnL: totalUnrealizedPnL,
             totalPnL: (portfolio.total_pnl || 0) + totalUnrealizedPnL,
-            holdings,
+            holdings: activeHoldings,
             is_live_sync: true,
             _debug: debugInfo
         });
