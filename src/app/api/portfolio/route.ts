@@ -1,6 +1,9 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import { mapToYahooTicker, getLotSize } from '@/lib/fo-utils';
+import { aggregateOrdersToPosition } from '@/lib/pnl-engine';
+import { isContractExpired } from '@/lib/expiry-engine';
+import { fetchLiveQuote, setFallbackLTP } from '@/lib/market-data';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,77 +38,48 @@ export async function GET(request: Request) {
             .eq('status', 'EXECUTED')
             .order('created_at', { ascending: true }); // Process chronologically
 
-        // Map to hold aggregated running positions
-        const positionAggregates = new Map<string, any>();
+        // 1. Group Orders by Symbol
+        const orderFlowsBySymbol = new Map<string, any[]>();
+        const symbolMetadata = new Map<string, any>();
 
         (executedOrders || []).forEach(order => {
-            const isFO = (order.instrument_type === 'OPTION' || order.instrument_type === 'FUTURE' ||
-                          order.symbol.match(/[0-9]{2}[A-Z]{3}[0-9]/)) || false;
-
-            // Normalize identifier key
             const uniqueKey = order.symbol;
+            
+            if (!orderFlowsBySymbol.has(uniqueKey)) {
+                orderFlowsBySymbol.set(uniqueKey, []);
+                
+                const isFO = (order.instrument_type === 'OPTION' || order.instrument_type === 'FUTURE' ||
+                              order.symbol.match(/[0-9]{2}[A-Z]{3}[0-9]/)) || false;
 
-            if (!positionAggregates.has(uniqueKey)) {
-                positionAggregates.set(uniqueKey, {
+                const metadata: any = {
                     symbol: order.symbol,
                     is_fo: isFO,
-                    qty: 0,
-                    total_invested: 0,
-                    avg_price: 0,
-                    // Parse necessary F&O metadata directly from the symbol string if an option
                     contract_symbol: order.symbol,
                     underlying_symbol: isFO ? order.symbol.replace(/[0-9].*$/, '') : order.symbol,
                     lot_size: order.lot_size || 1, // Fallback, will be corrected later
-                });
+                };
 
                 if (isFO) {
-                    // Try to guess basic metadata for NSE quoting from standard format 'NIFTY26MAR24800CE'
                     const match = order.symbol.match(/^([A-Z]+)(\d{2}[A-Z]{3})(\d+)(CE|PE)$/);
                     if (match) {
-                       positionAggregates.get(uniqueKey).strike_price = Number(match[3]);
-                       positionAggregates.get(uniqueKey).option_type = match[4];
-                       positionAggregates.get(uniqueKey).expiry_date = match[2]; // Raw string, NSE API usually matches raw DDMMM substring
+                       metadata.strike_price = Number(match[3]);
+                       metadata.option_type = match[4];
+                       metadata.expiry_date = match[2]; 
                     }
                 }
+                symbolMetadata.set(uniqueKey, metadata);
             }
-
-            const currentPos = positionAggregates.get(uniqueKey);
-            const flowQty = order.trade_type === 'BUY' ? order.qty : -order.qty;
-            const absoluteFlowInvestment = order.qty * order.requested_price;
-
-            // Logic to calculate Weighted Average Price for open positions correctly
-            if (currentPos.qty === 0 && flowQty > 0) {
-                 // Opening a fresh new long position
-                 currentPos.total_invested = absoluteFlowInvestment;
-                 currentPos.avg_price = order.requested_price;
-                 currentPos.entry_time = order.created_at;
-            } else if (currentPos.qty === 0 && flowQty < 0) {
-                 // Opening a fresh short position
-                 currentPos.total_invested = absoluteFlowInvestment;
-                 currentPos.avg_price = order.requested_price;
-                 currentPos.entry_time = order.created_at;
-            } else if ((currentPos.qty > 0 && flowQty > 0) || (currentPos.qty < 0 && flowQty < 0)) {
-                 // Averaging into an existing direction
-                 currentPos.total_invested += absoluteFlowInvestment;
-                 currentPos.avg_price = currentPos.total_invested / (Math.abs(currentPos.qty) + order.qty);
-            } else {
-                 // Scaling out of a position (Taking profits/losses) - avg price technically doesn't change
-                 const currentAbsoluteQty = Math.abs(currentPos.qty);
-                 let fraction = order.qty / currentAbsoluteQty;
-                 if (fraction > 1) { // Flipped position direction completely
-                     const flipQty = order.qty - currentAbsoluteQty;
-                     currentPos.total_invested = flipQty * order.requested_price;
-                     currentPos.avg_price = order.requested_price;
-                     currentPos.entry_time = order.created_at; // New entry time on flip
-                 } else { // Partial close
-                     currentPos.total_invested -= (currentPos.total_invested * fraction); 
-                 }
-            }
-
-            currentPos.qty += flowQty;
-            
-            positionAggregates.set(uniqueKey, currentPos);
+            orderFlowsBySymbol.get(uniqueKey)?.push(order);
         });
+
+        // 2. Compute Net Position States Using the PnL Engine
+        const positionAggregates = new Map<string, any>();
+        
+        for (const [symbol, orders] of orderFlowsBySymbol.entries()) {
+             const state = aggregateOrdersToPosition(orders);
+             const meta = symbolMetadata.get(symbol);
+             positionAggregates.set(symbol, { ...state, ...meta });
+        }
 
         // Generate unified positions array, actively dropping any instrument that currently hashes out to exactly 0 balance.
         let unifiedPositions = Array.from(positionAggregates.values()).filter(p => p.qty !== 0);
@@ -116,7 +90,9 @@ export async function GET(request: Request) {
 
         const yahooTickers = unifiedPositions.map(p => {
             let ticker = '';
-            fallback_ltp[p.symbol] = p.avg_price; // Save the derived average entry price
+            // Save the derived average entry price directly to the session registry
+            setFallbackLTP(p.symbol, p.avg_price);
+            fallback_ltp[p.symbol] = p.avg_price;
 
             try {
                 if (p.is_fo) {
@@ -137,28 +113,23 @@ export async function GET(request: Request) {
                     ticker = p.symbol.includes('.') ? p.symbol : `${p.symbol}.NS`;
                     debugInfo[p.symbol] = { ticker, asset_class: 'EQ', original_symbol: p.symbol, is_fo: false, fallback: p.avg_price };
                 }
-                return ticker;
+                return { ticker, original_symbol: p.symbol }; // Pass original symbol to use in quoting
             } catch (err) {
                 console.error(`[PortfolioAPI] Error mapping ticker for ${p.symbol}:`, err);
                 return null;
             }
-        }).filter(t => t !== null) as string[];
+        }).filter(t => t !== null) as { ticker: string, original_symbol: string }[];
 
         // 4. Batch Fetch Market Data (Strictly Yahoo for EQ/Index, NSE for Options)
         const marketQuotes = new Map();
 
-        // 4a. Fetch Equities & Indices from Yahoo
-        const uniqueYahooTickers = [...new Set(yahooTickers.filter(t => !debugInfo[Object.keys(debugInfo).find(k => debugInfo[k].ticker === t) || ''].is_fo))];
-        if (uniqueYahooTickers.length > 0) {
-            await Promise.all(uniqueYahooTickers.map(async (ticker) => {
-                try {
-                    const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=1d`, { next: { revalidate: 60 } });
-                    const data = await res.json();
-                    const price = data?.chart?.result?.[0]?.meta?.regularMarketPrice || 0;
-                    marketQuotes.set(ticker, price);
-                } catch (e) {
-                    marketQuotes.set(ticker, 0);
-                }
+        // 4a. Fetch Equities & Indices from Yahoo (Using our decoupled Market Data Service)
+        const uniqueYahooPayloads = [...new Map(yahooTickers.filter(t => !debugInfo[t.original_symbol].is_fo).map(item => [item.ticker, item])).values()];
+        
+        if (uniqueYahooPayloads.length > 0) {
+            await Promise.all(uniqueYahooPayloads.map(async (payload) => {
+                const livePrice = await fetchLiveQuote(payload.original_symbol, false);
+                marketQuotes.set(payload.ticker, livePrice);
             }));
         }
 

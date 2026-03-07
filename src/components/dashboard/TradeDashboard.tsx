@@ -272,7 +272,7 @@ export function TradeDashboard({
                 return;
             }
 
-            const res = await fetch('/api/trade', {
+            const res = await fetch('/api/orders/place', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

@@ -34,7 +34,7 @@ export function useMarketData(symbols: string | string[], pollIntervalMs = 5000)
 
         const fetchPendingOrders = async () => {
             try {
-                const res = await fetch('/api/orders');
+                const res = await fetch('/api/orders/history');
                 const orders = await res.json();
                 if (Array.isArray(orders)) {
                     setPendingOrders(orders.filter(o => o.status === 'PENDING' && (o.order_type === 'SL-M' || o.order_type === 'LIMIT')));

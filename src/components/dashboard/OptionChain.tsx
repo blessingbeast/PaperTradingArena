@@ -187,7 +187,7 @@ export function OptionChain() {
             const lotSize = getLotSize(rawSymbol);
 
             const promises = basket.map(item =>
-                fetch('/api/trade', {
+                fetch('/api/orders/place', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

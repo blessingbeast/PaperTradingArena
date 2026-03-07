@@ -14,7 +14,7 @@ export default function OrdersPage() {
 
     const fetchOrders = async () => {
         try {
-            const res = await fetch('/api/orders');
+            const res = await fetch('/api/orders/history');
             const data = await res.json();
             if (Array.isArray(data)) setOrders(data);
         } catch (e) {
@@ -31,7 +31,7 @@ export default function OrdersPage() {
     const cancelOrder = async (id: string) => {
         setCancellingId(id);
         try {
-            const res = await fetch(`/api/orders?id=${id}`, { method: 'DELETE' });
+            const res = await fetch(`/api/orders/cancel?id=${id}`, { method: 'DELETE' });
             const data = await res.json();
             if (data.success) {
                 toast.success('Order cancelled');
