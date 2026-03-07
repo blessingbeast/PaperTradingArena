@@ -71,10 +71,30 @@ export async function GET(request: Request) {
             chain = [{ expiry: activeExpiry || 'Unknown', options: mappedOptions }];
         }
 
+        let ltp = data.livePrice?.value;
+        
+        // Fallback to Yahoo Finance if Groww doesn't provide livePrice
+        if (!ltp) {
+            try {
+                let yfTicker = symbol;
+                if (symbol === 'NIFTY') yfTicker = '^NSEI';
+                else if (symbol === 'BANKNIFTY') yfTicker = '^NSEBANK';
+                else if (symbol === 'FINNIFTY') yfTicker = '^CNXFIN';
+                else yfTicker = `${symbol}.NS`;
+
+                const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${yfTicker}?interval=1d&range=1d`, { cache: 'no-store' });
+                const yfData = await res.json();
+                ltp = yfData?.chart?.result?.[0]?.meta?.regularMarketPrice || 0;
+            } catch (e) {
+                console.error("YF Fallback failed", e);
+                ltp = 0;
+            }
+        }
+
         return NextResponse.json({
             underlying: symbol,
             chain,
-            ltp: data.livePrice?.value || 0
+            ltp: ltp || 0
         });
 
     } catch (error: any) {

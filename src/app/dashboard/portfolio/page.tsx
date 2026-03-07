@@ -135,6 +135,8 @@ export default function PortfolioPage() {
                                     <th className="py-4 px-6 text-right">Qty (Lots)</th>
                                     <th className="py-4 px-6 text-right">Avg Price</th>
                                     <th className="py-4 px-6 text-right">LTP</th>
+                                    <th className="py-4 px-6 text-right hidden lg:table-cell">Entry Time</th>
+                                    <th className="py-4 px-6 text-right hidden lg:table-cell">Duration</th>
                                     <th className="py-4 px-6 text-right">Net Value</th>
                                     <th className="py-4 px-6 text-right">Unrealized P&L</th>
                                     <th className="py-4 px-6 text-center">Action</th>
@@ -154,6 +156,21 @@ export default function PortfolioPage() {
                                         const isFO = stock.is_fo;
                                         const units = Math.abs(stock.qty);
                                         const lots = stock.lot_size ? (units / stock.lot_size).toFixed(1) : '1';
+
+                                        const entryDate = new Date(stock.entry_time);
+                                        const entryString = stock.entry_time ? entryDate.toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '--';
+                                        
+                                        let durationString = '--';
+                                        if (stock.entry_time) {
+                                            const diffMs = new Date().getTime() - entryDate.getTime();
+                                            const diffMins = Math.floor(diffMs / 60000);
+                                            const diffHours = Math.floor(diffMins / 60);
+                                            const diffDays = Math.floor(diffHours / 24);
+                                            
+                                            if (diffDays > 0) durationString = `${diffDays}d ${diffHours % 24}h`;
+                                            else if (diffHours > 0) durationString = `${diffHours}h ${diffMins % 60}m`;
+                                            else durationString = `${diffMins}m`;
+                                        }
 
                                         return (
                                             <tr key={stock.symbol} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-all group">
@@ -202,6 +219,15 @@ export default function PortfolioPage() {
                                                             <div className={cn("w-1.5 h-1.5 rounded-full", stock.ltp > 0 ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-rose-500")} />
                                                         </div>
                                                     </div>
+                                                </td>
+                                                <td className="py-5 px-6 text-right font-mono text-[12px] text-slate-500 hidden lg:table-cell">
+                                                    <div className="flex flex-col items-end">
+                                                        <span className="font-bold text-slate-900 dark:text-slate-100">{stock.entry_time ? entryString.split(', ')[0] : '--'}</span>
+                                                        <span className="text-[10px] text-slate-400">{stock.entry_time ? entryString.split(', ')[1] : ''}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="py-5 px-6 text-right font-mono text-[12px] font-bold text-slate-500 hidden lg:table-cell">
+                                                    {durationString}
                                                 </td>
                                                 <td className="py-5 px-6 text-right font-mono font-bold text-[13px] text-slate-900 dark:text-slate-100">
                                                     ₹{stock.current.toLocaleString('en-IN', { maximumFractionDigits: 0 })}

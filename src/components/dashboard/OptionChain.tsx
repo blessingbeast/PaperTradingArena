@@ -353,12 +353,18 @@ export function OptionChain() {
                             </tr>
                         </thead>
                         <tbody className="font-mono">
-                            {currentChain.map((row, idx) => {
-                                const isCallITM = row.strike < ltp;
-                                const isPutITM = row.strike > ltp;
-                                const isATM = Math.abs(row.strike - ltp) < (currentChain[1]?.strike - currentChain[0]?.strike);
+                            {currentChain.length > 0 && (function() {
+                                // Find exact ATM strike by minimal distance to LTP
+                                const atmStrike = currentChain.reduce((prev, curr) => 
+                                    Math.abs(curr.strike - ltp) < Math.abs(prev.strike - ltp) ? curr : prev
+                                ).strike;
 
-                                return (
+                                return currentChain.map((row, idx) => {
+                                    const isCallITM = row.strike < ltp;
+                                    const isPutITM = row.strike > ltp;
+                                    const isATM = row.strike === atmStrike;
+
+                                    return (
                                     <tr key={row.strike} className="border-b hover:bg-muted/30 group">
                                         {/* CALLS */}
                                         {showGreeks && <td className={cn("p-2", isCallITM ? "bg-amber-500/5" : "")}>{(row.CE.delta ?? 0).toFixed(2)}</td>}
@@ -403,7 +409,8 @@ export function OptionChain() {
                                         {showGreeks && <td className={cn("p-2 text-left", isPutITM ? "bg-amber-500/5" : "")}>{(row.PE.delta ?? 0).toFixed(2)}</td>}
                                     </tr>
                                 );
-                            })}
+                                });
+                            })()}
                         </tbody>
                     </table>
                 </div>

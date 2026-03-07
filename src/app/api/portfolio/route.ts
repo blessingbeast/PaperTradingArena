@@ -78,10 +78,12 @@ export async function GET(request: Request) {
                  // Opening a fresh new long position
                  currentPos.total_invested = absoluteFlowInvestment;
                  currentPos.avg_price = order.requested_price;
+                 currentPos.entry_time = order.created_at;
             } else if (currentPos.qty === 0 && flowQty < 0) {
                  // Opening a fresh short position
                  currentPos.total_invested = absoluteFlowInvestment;
                  currentPos.avg_price = order.requested_price;
+                 currentPos.entry_time = order.created_at;
             } else if ((currentPos.qty > 0 && flowQty > 0) || (currentPos.qty < 0 && flowQty < 0)) {
                  // Averaging into an existing direction
                  currentPos.total_invested += absoluteFlowInvestment;
@@ -94,6 +96,7 @@ export async function GET(request: Request) {
                      const flipQty = order.qty - currentAbsoluteQty;
                      currentPos.total_invested = flipQty * order.requested_price;
                      currentPos.avg_price = order.requested_price;
+                     currentPos.entry_time = order.created_at; // New entry time on flip
                  } else { // Partial close
                      currentPos.total_invested -= (currentPos.total_invested * fraction); 
                  }
