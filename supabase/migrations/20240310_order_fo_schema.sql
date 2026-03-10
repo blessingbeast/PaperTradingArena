@@ -1,0 +1,7 @@
+-- Add F&O columns to Orders table to support lot sizes natively
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS lot_size INTEGER;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS instrument_type TEXT DEFAULT 'EQUITY';
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS lots INTEGER;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS quantity INTEGER;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS execution_price NUMERIC;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'pending';

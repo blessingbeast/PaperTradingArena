@@ -1,8 +1,8 @@
 -- 1. Modify existing Users table for RBAC
 ALTER TABLE public.users ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'user';
 
--- Set a default admin (Update this to the user's actual desired admin UUID or email later if needed via UI)
--- UPDATE public.users SET role = 'admin' WHERE email = 'admin@email.com';
+-- Set the requested user as admin
+UPDATE public.users SET role = 'admin' WHERE email = 'ashu.bisht.31105@gmail.com';
 
 -- 2. Admin Action Logging Table
 CREATE TABLE IF NOT EXISTS public.admin_logs (

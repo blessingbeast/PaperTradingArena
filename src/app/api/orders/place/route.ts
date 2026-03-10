@@ -12,13 +12,19 @@ export async function POST(request: Request) {
 
     try {
         const payload = await request.json();
+        // Support both legacy payload (qty, type) and new F&O payload (lots, side)
         let {
-            symbol, type, qty, asset_class, order_type = 'MARKET',
-            requested_price, trigger_price, option_type, strike_price,
+            symbol, type, side, qty, lots, asset_class, order_type = 'MARKET', orderType,
+            requested_price, price, trigger_price, option_type, strike_price,
             expiry_date, underlying_symbol
         } = payload;
 
-        if (!symbol || !type || !qty || qty <= 0) return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
+        const tradeSide = type || side;
+        const inputLots = lots || qty;
+        const inputPrice = price || requested_price;
+        const finalOrderType = orderType || order_type;
+
+        if (!symbol || !tradeSide || !inputLots || inputLots <= 0) return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
 
         const isFO = asset_class === 'FO' || asset_class === 'OPT' || symbol.match(/[0-9]{2}[A-Z]{3}[0-9]/);
         const resolvedAssetClass = isFO ? 'FO' : 'EQ';
@@ -30,7 +36,7 @@ export async function POST(request: Request) {
         }
 
         // 2. Fetch Live Quote Validator (Extracted to market-data)
-        let marketPrice: number | null = payload.price ? Number(payload.price) : null;
+        let marketPrice: number | null = inputPrice ? Number(inputPrice) : null;
         if (!marketPrice) {
              marketPrice = await fetchLiveQuote(symbol, isFO, underlying_symbol);
         }
@@ -40,9 +46,9 @@ export async function POST(request: Request) {
         }
 
         // 3. Lot Calculation (Extracted to trade-engine)
-        const parsedQty = Number(qty);
+        const parsedQty = Number(inputLots); // Technically "lots" now
         const parsedLotSize = isFO ? getLotSize(underlying_symbol || symbol) : 1;
-        const totalUnits = scaleQuantity(parsedQty, parsedLotSize);
+        const totalUnits = scaleQuantity(parsedQty, parsedLotSize); // lots * lotSize
 
         // 4. Position Checking & Margin Lock
         const { data: portfolio } = await supabase.from('portfolios').select('*').eq('user_id', session.user.id).maybeSingle();
@@ -52,34 +58,45 @@ export async function POST(request: Request) {
         let requiredMargin = tradeValue;
 
         if (resolvedAssetClass === 'EQ' && payload.instrument_type === 'MIS') requiredMargin /= 5; 
-        else if (isFO) requiredMargin = type === 'BUY' ? tradeValue : tradeValue * 2.5;
+        else if (isFO) requiredMargin = tradeSide === 'BUY' ? tradeValue : tradeValue * 2.5;
 
         const numericBalance = Number(portfolio.balance);
         if (requiredMargin > numericBalance * 50) return NextResponse.json({ error: 'Excessive leverage detected.' }, { status: 400 });
-        if (type === 'BUY' && numericBalance < requiredMargin) return NextResponse.json({ error: `Insufficient margin.` }, { status: 400 });
+        if (tradeSide === 'BUY' && numericBalance < requiredMargin) return NextResponse.json({ error: `Insufficient margin.` }, { status: 400 });
 
         // 5. Build Instrument Schema Data
         let dbInstrumentType = 'STOCK';
         if (isFO) dbInstrumentType = option_type ? 'OPTION' : 'FUTURE';
 
-        // 6. DB Execution
+        // 6. DB Execution (With Extended Backward Compatible F&O Schema)
         const { data: orderData, error: orderError } = await supabase.from('orders').insert({
             user_id: session.user.id,
             symbol,
-            trade_type: type,
-            order_type,
-            qty: totalUnits,
-            status: 'EXECUTED',
-            requested_price: marketPrice,
-            filled_qty: totalUnits,
-            instrument_type: dbInstrumentType,
-            lot_size: parsedLotSize
+            trade_type: tradeSide, // Legacy backwards compatibility
+            side: tradeSide, // New explicit
+            order_type: finalOrderType, // Unified default
+            qty: totalUnits, // Legacy total scaled fallback
+            quantity: totalUnits, // New explicit derived scaling
+            lots: parsedQty,
+            lot_size: parsedLotSize,
+            status: 'EXECUTED', // Auto-executed for paper simulator defaults
+            requested_price: inputPrice || marketPrice,
+            price: inputPrice || marketPrice, // New requested equivalent 
+            execution_price: marketPrice, // New computed explicit execution
+            filled_qty: totalUnits, // Full fills default
+            instrument_type: dbInstrumentType
         }).select().single();
 
-        if (orderError) return NextResponse.json({ error: orderError.message }, { status: 500 });
+        if (orderError) {
+            console.error("Order Supabase Insertion Error:", orderError);
+            if (orderError.code === 'PGRST204' || orderError.message?.toLowerCase().includes('column')) {
+                 return NextResponse.json({ success: false, message: "Order failed due to schema mismatch. Please contact admin and ensure the lot_size database migration is applied." }, { status: 500 });
+            }
+            return NextResponse.json({ success: false, message: orderError.message }, { status: 500 });
+        }
 
         // Update basic raw balance. Detailed positions handled natively by PnL engine moving forward.
-        const marginImpact = type === 'BUY' ? -requiredMargin : requiredMargin;
+        const marginImpact = tradeSide === 'BUY' ? -requiredMargin : requiredMargin;
         await supabase.from('portfolios').update({
             balance: numericBalance + marginImpact,
             updated_at: new Date().toISOString()
