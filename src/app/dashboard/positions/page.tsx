@@ -1,17 +1,47 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Briefcase, Loader2, Activity } from 'lucide-react';
-import { usePortfolio } from '@/hooks/usePortfolio';
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Briefcase, Loader2, Activity, RefreshCw, TrendingUp, TrendingDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
 
 export default function PositionsPage() {
-    const { holdings, loading } = usePortfolio();
+    const [positions, setPositions] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
 
-    if (loading && !holdings.length) {
+    const fetchPositions = async (silent = false) => {
+        if (!silent) setLoading(true);
+        else setRefreshing(true);
+        try {
+            const res = await fetch('/api/positions', { cache: 'no-store' });
+            if (!res.ok) throw new Error('Failed to load positions');
+            const data = await res.json();
+            setPositions(data.positions || []);
+        } catch (e: any) {
+            console.error('Positions fetch error:', e);
+            toast.error('Failed to sync positions. Retrying...');
+        } finally {
+            setLoading(false);
+            setRefreshing(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchPositions();
+        // Auto-refresh every 10 seconds for live PnL
+        const interval = setInterval(() => fetchPositions(true), 10000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const totalPnL = positions.reduce((sum, p) => sum + (p.unrealized_pnl || 0), 0);
+    const totalInvested = positions.reduce((sum, p) => sum + (p.invested || 0), 0);
+
+    if (loading) {
         return (
             <div className="h-[calc(100vh-100px)] flex flex-col items-center justify-center">
                 <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
@@ -20,23 +50,53 @@ export default function PositionsPage() {
         );
     }
 
-    const positions = holdings;
-
     return (
         <div className="space-y-6 max-w-7xl mx-auto pb-10">
+            {/* Header */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Positions</h1>
                     <div className="flex items-center gap-2 mt-1">
                         <div className="flex items-center gap-1.5 px-2 py-0.5 bg-sky-500/10 rounded-full border border-sky-500/20">
                             <div className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
-                            <span className="text-[10px] font-bold text-sky-600 uppercase tracking-widest">Active Sync</span>
+                            <span className="text-[10px] font-bold text-sky-600 uppercase tracking-widest">Live Sync</span>
                         </div>
-                        <p className="text-muted-foreground text-xs font-medium">Real-time open trade management</p>
+                        <p className="text-muted-foreground text-xs font-medium">{positions.length} open position{positions.length !== 1 ? 's' : ''}</p>
                     </div>
                 </div>
+                <Button variant="outline" size="sm" onClick={() => fetchPositions(true)} disabled={refreshing} className="gap-2">
+                    <RefreshCw className={cn('h-4 w-4', refreshing && 'animate-spin')} />
+                    Refresh
+                </Button>
             </div>
 
+            {/* Summary Row */}
+            {positions.length > 0 && (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <Card className="shadow-sm">
+                        <CardContent className="p-4">
+                            <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-1">Open Positions</p>
+                            <p className="text-2xl font-bold">{positions.length}</p>
+                        </CardContent>
+                    </Card>
+                    <Card className="shadow-sm">
+                        <CardContent className="p-4">
+                            <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-1">Invested</p>
+                            <p className="text-2xl font-bold font-mono">₹{totalInvested.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</p>
+                        </CardContent>
+                    </Card>
+                    <Card className={cn('shadow-sm col-span-2', totalPnL >= 0 ? 'border-emerald-500/30' : 'border-rose-500/30')}>
+                        <CardContent className="p-4">
+                            <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-1">Unrealized P&L</p>
+                            <p className={cn('text-2xl font-bold font-mono', totalPnL >= 0 ? 'text-emerald-500' : 'text-rose-500')}>
+                                {totalPnL >= 0 ? '+' : ''}₹{totalPnL.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+                            </p>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
+
+            {/* Positions Table */}
             <Card className="shadow-2xl overflow-hidden border-t-0 rounded-xl">
                 <CardHeader className="border-b bg-slate-50/50 dark:bg-slate-800/20 pb-4">
                     <CardTitle className="flex items-center gap-2 text-lg font-bold">
@@ -48,9 +108,8 @@ export default function PositionsPage() {
                         <table className="w-full text-sm">
                             <thead className="bg-slate-50 dark:bg-slate-800/40 border-b border-border text-slate-500">
                                 <tr className="text-left uppercase text-[10px] font-black tracking-widest">
-                                    <th className="py-4 px-6">Product</th>
                                     <th className="py-4 px-6">Instrument</th>
-                                    <th className="py-4 px-6">Expiry</th>
+                                    <th className="py-4 px-6">Type</th>
                                     <th className="py-4 px-6 text-right">Qty (Lots)</th>
                                     <th className="py-4 px-6 text-right">Avg Price</th>
                                     <th className="py-4 px-6 text-right">LTP</th>
@@ -60,14 +119,14 @@ export default function PositionsPage() {
                             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
                                 {positions.length === 0 ? (
                                     <tr>
-                                        <td colSpan={7} className="py-24 text-center">
+                                        <td colSpan={6} className="py-24 text-center">
                                             <div className="flex flex-col items-center max-w-sm mx-auto">
                                                 <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6">
                                                     <Briefcase className="h-8 w-8 text-slate-200" />
                                                 </div>
                                                 <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-2">No Open Trades</h3>
                                                 <p className="text-slate-400 text-sm mb-6 leading-relaxed px-4">
-                                                    Your intraday and F&O positions will appear here with live P&L tracking once you take a trade.
+                                                    Your equity and F&O positions will appear here with live P&L once you place a trade.
                                                 </p>
                                                 <Link href="/dashboard/trade">
                                                     <Button className="h-11 px-10 font-black shadow-lg shadow-primary/20 rounded-full uppercase text-xs tracking-wider">Start Trading</Button>
@@ -76,60 +135,67 @@ export default function PositionsPage() {
                                         </td>
                                     </tr>
                                 ) : (
-                                    positions.map((stock: any) => {
-                                        const isProfit = stock.pnl >= 0;
-                                        const lots = stock.lot_size ? (Math.abs(stock.qty) / stock.lot_size).toFixed(1) : '1';
+                                    positions.map((pos) => {
+                                        const isProfit = (pos.unrealized_pnl || 0) >= 0;
+                                        const lotsDisplay = pos.lot_size > 1
+                                            ? `${pos.lots?.toFixed(0) || Math.abs(pos.qty) / pos.lot_size} lots`
+                                            : `${Math.abs(pos.qty)} qty`;
 
                                         return (
-                                            <tr key={stock.symbol} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-all group">
+                                            <tr key={pos.symbol} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-all group">
                                                 <td className="py-5 px-6">
-                                                    <Badge className="font-black text-[10px] px-2 py-0.5 bg-slate-950 text-white rounded-sm">MIS</Badge>
+                                                    <div className="flex flex-col gap-0.5">
+                                                        <span className="font-black text-slate-900 dark:text-slate-100 text-[13px] tracking-tight">{pos.symbol}</span>
+                                                        {pos.is_fo && pos.strike_price && (
+                                                            <span className="text-[10px] font-bold text-slate-400 uppercase">
+                                                                {pos.underlying_symbol} {pos.strike_price} {pos.option_type} · {pos.expiry_date}
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 </td>
                                                 <td className="py-5 px-6">
                                                     <div className="flex flex-col gap-1">
-                                                        <span className="font-black text-slate-900 dark:text-slate-100 text-[13px] tracking-tight">{stock.symbol}</span>
-                                                        <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1.5 uppercase">
-                                                            {stock.is_fo ? 'F&O Contract' : 'Equity MIS'}
+                                                        <Badge className={cn(
+                                                            'font-black text-[10px] px-2 py-0.5 rounded-sm w-fit',
+                                                            pos.is_fo ? 'bg-purple-600 text-white' : 'bg-slate-950 text-white'
+                                                        )}>
+                                                            {pos.instrument_type || (pos.is_fo ? 'F&O' : 'EQ')}
+                                                        </Badge>
+                                                        <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1 uppercase">
+                                                            {pos.qty > 0 ? 'LONG' : 'SHORT'}
                                                             <Activity className="h-3 w-3 text-slate-300" />
                                                         </span>
                                                     </div>
                                                 </td>
-                                                <td className="py-5 px-6">
-                                                    {stock.expiry_date ? (
-                                                        <Badge variant="outline" className="text-[10px] font-black tracking-tighter text-blue-600 bg-blue-50 border-blue-200 py-0.5 px-1.5">
-                                                            {new Date(stock.expiry_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
-                                                        </Badge>
-                                                    ) : (
-                                                        <span className="text-slate-300 font-mono">—</span>
-                                                    )}
-                                                </td>
-                                                <td className="py-5 px-6 text-right font-mono font-bold text-slate-700 dark:text-slate-300">
+                                                <td className="py-5 px-6 text-right font-mono font-bold">
                                                     <div className="flex flex-col items-end">
-                                                        <span className={cn("text-[13px]", stock.qty < 0 ? "text-rose-600" : "text-emerald-600")}>
-                                                            {stock.qty < 0 ? '-' : '+'}{Math.abs(stock.qty)}
+                                                        <span className={cn('text-[13px]', pos.qty < 0 ? 'text-rose-600' : 'text-emerald-600')}>
+                                                            {pos.qty < 0 ? '-' : '+'}{Math.abs(pos.qty)}
                                                         </span>
-                                                        <span className="text-[10px] text-slate-400 font-medium">
-                                                            {lots} Lots
-                                                        </span>
+                                                        <span className="text-[10px] text-slate-400 font-medium">{lotsDisplay}</span>
                                                     </div>
                                                 </td>
                                                 <td className="py-5 px-6 text-right font-mono text-[13px] text-slate-500">
-                                                    ₹{stock.avg_price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                                                    ₹{(pos.avg_price || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                                                 </td>
                                                 <td className="py-5 px-6 text-right font-mono">
                                                     <div className="flex flex-col items-end">
                                                         <div className="flex items-center gap-1.5">
                                                             <span className="font-black text-[13px] text-slate-900 dark:text-white">
-                                                                ₹{stock.ltp.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                                                                ₹{(pos.ltp || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                                                             </span>
-                                                            <div className={cn("w-1.5 h-1.5 rounded-full", stock.ltp > 0 ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-rose-500")} />
+                                                            <div className={cn('w-1.5 h-1.5 rounded-full', pos.ltp > pos.avg_price ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-rose-500')} />
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td className="py-5 px-6 text-right">
-                                                    <div className="flex flex-col items-end">
-                                                        <span className={cn("font-black font-mono text-[14px]", isProfit ? 'text-emerald-500' : 'text-rose-500')}>
-                                                            {isProfit ? '+' : ''}₹{stock.pnl.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+                                                    <div className="flex flex-col items-end gap-0.5">
+                                                        <span className={cn('font-black font-mono text-[14px]', isProfit ? 'text-emerald-500' : 'text-rose-500')}>
+                                                            {isProfit ? '+' : ''}₹{(pos.unrealized_pnl || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+                                                        </span>
+                                                        <span className={cn('text-[10px] font-semibold flex items-center gap-0.5', isProfit ? 'text-emerald-500/60' : 'text-rose-500/60')}>
+                                                            {isProfit ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
+                                                            {pos.invested > 0 ? ((Math.abs(pos.unrealized_pnl) / pos.invested) * 100).toFixed(2) : '0.00'}%
                                                         </span>
                                                     </div>
                                                 </td>

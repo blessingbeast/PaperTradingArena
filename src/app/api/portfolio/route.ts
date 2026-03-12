@@ -30,13 +30,13 @@ export async function GET(request: Request) {
             });
         }
 
-        // NEW ARCHITECTURE: Derive Active Positions purely from Executed Orders
+        // FIX: Fetch orders with case-insensitive status check (some DBs store 'executed' lowercase)
         const { data: executedOrders } = await supabase
             .from('orders')
             .select('*')
             .eq('user_id', session.user.id)
-            .eq('status', 'EXECUTED')
-            .order('created_at', { ascending: true }); // Process chronologically
+            .or('status.eq.EXECUTED,status.eq.executed,status.eq.Executed,status.eq.FILLED,status.eq.filled')
+            .order('created_at', { ascending: true });
 
         // 1. Group Orders by Symbol
         const orderFlowsBySymbol = new Map<string, any[]>();
@@ -48,23 +48,31 @@ export async function GET(request: Request) {
             if (!orderFlowsBySymbol.has(uniqueKey)) {
                 orderFlowsBySymbol.set(uniqueKey, []);
                 
-                const isFO = (order.instrument_type === 'OPTION' || order.instrument_type === 'FUTURE' ||
-                              order.symbol.match(/[0-9]{2}[A-Z]{3}[0-9]/)) || false;
+                // Detect F&O via instrument_type column OR symbol pattern
+                const isFO = (
+                    order.instrument_type === 'OPTION' || 
+                    order.instrument_type === 'FUTURE' ||
+                    order.instrument_type === 'FNO' ||
+                    /[0-9]{2}[A-Z]{3}[0-9]/.test(order.symbol)
+                );
 
                 const metadata: any = {
                     symbol: order.symbol,
                     is_fo: isFO,
                     contract_symbol: order.symbol,
-                    underlying_symbol: isFO ? order.symbol.replace(/[0-9].*$/, '') : order.symbol,
-                    lot_size: order.lot_size || 1, // Fallback, will be corrected later
+                    // Extract underlying by dropping the date+strike+type suffix
+                    underlying_symbol: isFO ? order.symbol.replace(/\d{2}[A-Z]{3}.*$/, '') : order.symbol,
+                    lot_size: order.lot_size || getLotSize(order.symbol) || 1,
                 };
 
                 if (isFO) {
-                    const match = order.symbol.match(/^([A-Z]+)(\d{2}[A-Z]{3})(\d+)(CE|PE)$/);
+                    // NSE F&O symbol format: SYMBOL + DDMMM + [YY] + STRIKE + CE/PE
+                    // Handles both: NIFTY26MAR23850CE and NIFTY26MAR2623850CE (with 2-digit year)
+                    const match = order.symbol.match(/^([A-Z]+)(\d{2}[A-Z]{3})(\d{2})?(\d{4,6})(CE|PE)$/);
                     if (match) {
-                       metadata.strike_price = Number(match[3]);
-                       metadata.option_type = match[4];
-                       metadata.expiry_date = match[2]; 
+                        metadata.strike_price = Number(match[4]);  // Correct strike (4-6 digits)
+                        metadata.option_type = match[5];           // CE or PE
+                        metadata.expiry_date = match[2] + (match[3] || ''); // e.g. '26MAR' or '26MAR26'
                     }
                 }
                 symbolMetadata.set(uniqueKey, metadata);
@@ -81,7 +89,7 @@ export async function GET(request: Request) {
              positionAggregates.set(symbol, { ...state, ...meta });
         }
 
-        // Generate unified positions array, actively dropping any instrument that currently hashes out to exactly 0 balance.
+        // Filter: only keep positions where net quantity is non-zero
         let unifiedPositions = Array.from(positionAggregates.values()).filter(p => p.qty !== 0);
 
         // 3. Resolve Real Tickers & Build Fallback LTPs
